@@ -1,0 +1,124 @@
+[
+    [
+        {
+            "id": "1",
+            "category": "Ancient Egypt",
+            "parent_category": "History",
+            "additional_requirement": "major historical periods and achievements"
+        },
+        {
+            "id": "2",
+            "category": "Ancient Greece",
+            "parent_category": "History",
+            "additional_requirement": "key philosophers, wars, and cultural aspects"
+        },
+        {
+            "id": "3",
+            "category": "Mesopotamia",
+            "parent_category": "History",
+            "additional_requirement": "significant cities, empires, and inventions"
+        },
+        {
+            "id": "4",
+            "category": "Indus Valley Civilisation",
+            "parent_category": "History",
+            "additional_requirement": "unique features and discoveries"
+        },
+        {
+            "id": "5",
+            "category": "Ancient technology",
+            "parent_category": "History",
+            "additional_requirement": "major technological advancements"
+        },
+        {
+            "id": "6",
+            "category": "History of mathematics",
+            "parent_category": "History",
+            "additional_requirement": "important mathematicians and concepts"
+        },
+        {
+            "id": "7",
+            "category": "Middle Ages",
+            "parent_category": "History",
+            "additional_requirement": "key events, social structures, and cultural developments"
+        },
+        {
+            "id": "8",
+            "category": "Medieval technology",
+            "parent_category": "History",
+            "additional_requirement": "notable technological innovations"
+        },
+        {
+            "id": "9",
+            "category": "Renaissance",
+            "parent_category": "History",
+            "additional_requirement": "major artists, scholars, and cultural movements"
+        },
+        {
+            "id": "10",
+            "category": "Industrial Revolution",
+            "parent_category": "History",
+            "additional_requirement": "core industries and social changes"
+        },
+        {
+            "id": "11",
+            "category": "American Revolution",
+            "parent_category": "History",
+            "additional_requirement": "key battles, leaders, and causes"
+        },
+        {
+            "id": "12",
+            "category": "French Revolution",
+            "parent_category": "History",
+            "additional_requirement": "major phases and influential figures"
+        },
+        {
+            "id": "13",
+            "category": "Cradle of civilization",
+            "parent_category": "History",
+            "additional_requirement": "origin and early development"
+        },
+        {
+            "id": "14",
+            "category": "Four Great Ancient Civilizations",
+            "parent_category": "History",
+            "additional_requirement": "comparative study of major civilizations"
+        },
+        {
+            "id": "15",
+            "category": "History of Europe",
+            "parent_category": "History",
+            "additional_requirement": "major historical epochs and events"
+        },
+        {
+            "id": "16",
+            "category": "History of accounting",
+            "parent_category": "History",
+            "additional_requirement": "development and key milestones"
+        },
+        {
+            "id": "17",
+            "category": "History of banking",
+            "parent_category": "History",
+            "additional_requirement": "evolution and important institutions"
+        },
+        {
+            "id": "18",
+            "category": "History of education",
+            "parent_category": "History",
+            "additional_requirement": "significant educational reforms"
+        },
+        {
+            "id": "19",
+            "category": "History of technology",
+            "parent_category": "History",
+            "additional_requirement": "broad technological progress"
+        },
+        {
+            "id": "20",
+            "category": "History of industrialisation",
+            "parent_category": "History",
+            "additional_requirement": "global industrialization trends"
+        }
+    ]
+]

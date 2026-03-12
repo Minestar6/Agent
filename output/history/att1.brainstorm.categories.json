@@ -1,0 +1,40 @@
+[
+    [
+        {
+            "id": "1",
+            "category": "Ancient Civilizations",
+            "parent_category": "History",
+            "additional_requirement": "only ask about the major achievements and characteristics of each civilization"
+        },
+        {
+            "id": "2",
+            "category": "Medieval Europe",
+            "parent_category": "History",
+            "additional_requirement": "focus on important events and cultural developments during this period"
+        },
+        {
+            "id": "3",
+            "category": "Renaissance Art",
+            "parent_category": "History",
+            "additional_requirement": "ask about famous artists and their representative works"
+        },
+        {
+            "id": "4",
+            "category": "Industrial Revolution",
+            "parent_category": "History",
+            "additional_requirement": "questions related to technological advancements and social changes"
+        },
+        {
+            "id": "5",
+            "category": "American Revolution",
+            "parent_category": "History",
+            "additional_requirement": "key events and figures in the fight for independence"
+        },
+        {
+            "id": "6",
+            "category": "French Revolution",
+            "parent_category": "History",
+            "additional_requirement": "major events and their impact on France and Europe"
+        }
+    ]
+]
