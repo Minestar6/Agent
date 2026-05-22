@@ -1,0 +1,47 @@
+# macOS
+.DS_Store
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# Python build artifacts
+build/
+dist/
+*.egg-info/
+
+# Testing
+.pytest_cache/
+.mypy_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs
+*.log
+
+# Environment variables
+.env
+
+# Temporary / generated files
+experiments/output/
+experiments/tmp/
+docs/generated/
+
+# Runtime state
+utils/throttle.ctrl
+
+# Local temp scripts
+a.py
+
+# OS files
+Thumbs.db

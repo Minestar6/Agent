@@ -1,0 +1,41 @@
+[project]
+name = "benchforge"
+version = "0.1.0"
+description = "基准测试问题自动生成框架"
+requires-python = ">=3.10"
+authors = [
+    {name = "BenchForge Team", email = "info@benchforge.org"}
+]
+dependencies = [
+    "pydantic>=2.0.0",
+    "openai>=1.0.0",
+    "requests>=2.28.0",
+    "beautifulsoup4>=4.12.0",
+    "tiktoken>=0.5.0",
+    "loguru>=0.7.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "ruff>=0.1.0",
+    "mypy>=1.5.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+ignore = []
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true

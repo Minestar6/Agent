@@ -7,7 +7,6 @@ import re
 import time
 
 from typing import Any, Dict, List, Optional
-import dotenv
 import httpx
 from openai import OpenAI
 import torch
@@ -15,14 +14,13 @@ import tqdm
 import transformers
 from autogen.code_utils import extract_code
 from transformers import AutoTokenizer
+from settings import TOKEN_CONFIG_DIR, get_required_env
 """
 加载yaml文件作为参数：相对路径，文件名称
 @hydra.main(config_path="../configs/", config_name="evaluator")
 def main(cfg: DictConfig):
 """
 
-# 加载配置文件
-dotenv.load_dotenv()
 ark_models = {'DeepSeek-V3.1':'ep-20251023143912-6l7qm','DouBao-Lite':'ep-20251023143912-6l7qm'}
 
 @dataclass
@@ -185,7 +183,11 @@ class Model:
             self.model_name = model_choice
             if model_choice in ark_models.keys():
                 self.model_id = ark_models[model_choice]
-                self.client = OpenAI(api_key=os.getenv("ARK_API_KEY"),base_url=os.getenv("ARK_BASE_URL"),http_client=httpx.Client(trust_env=False))
+                self.client = OpenAI(
+                    api_key=get_required_env("ARK_API_KEY"),
+                    base_url=get_required_env("ARK_BASE_URL"),
+                    http_client=httpx.Client(trust_env=False),
+                )
             
 
     # prompt是个list，比如一个batch
@@ -257,12 +259,12 @@ class Model:
 def _get_encoder(model_name="DeepSeek-V3.1"):
     """Get tiktoken encoder with fallback."""
     try:
-        token_path = "D:\\Download\\vscode\\code\\agent\\token_config\\" + model_name
+        token_path = TOKEN_CONFIG_DIR / model_name
         tokenizer = AutoTokenizer.from_pretrained(token_path,trust_remote_code=True)
         return tokenizer
     except Exception as e:
         print(f"Unknown encoding model'{model_name}': {str(e)[:60]}...")
-        token_path = "D:\\Download\\vscode\\code\\agent\\token_config\\DeepSeek-V3.1"
+        token_path = TOKEN_CONFIG_DIR / "DeepSeek-V3.1"
         tokenizer = AutoTokenizer.from_pretrained(token_path,trust_remote_code=True)
         return tokenizer
 
@@ -285,4 +287,4 @@ if __name__ == '__main__':
     model = Model("DeepSeek-V3.1")
     # model = Model(r"D:/model/chatglm3-6b")
     result = model.generate(prompt)
-    print(result.completions)
+    print(result)
