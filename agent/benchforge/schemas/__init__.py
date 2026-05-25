@@ -34,6 +34,11 @@ from .core import (
     QuestionGenerationInput,
 )
 
+# Agent相关Schema（新增）
+from .agent_decision import ControlDecision, DecisionReasoning, AgentDecision
+from .observation import Observation
+from .agent_intent import AgentIntent
+
 __all__ = [
     # 核心枚举
     "QuestionMode",
@@ -66,4 +71,11 @@ __all__ = [
     "RetrievalConfig",
     "GenerationConfig",
     "QuestionGenerationInput",
+
+    # Agent相关Schema（新增）
+    "ControlDecision",
+    "DecisionReasoning",
+    "AgentDecision",
+    "Observation",
+    "AgentIntent",
 ]

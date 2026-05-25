@@ -10,7 +10,7 @@ from benchforge.schemas import (
     QuestionStatus,
 )
 from benchforge.utils import chunk_document, extract_json_array, search_wikipedia, fetch_wikipedia_page
-from benchforge.artifacts import ArtifactStore
+from benchforge.utils.artifact_store import ArtifactStore
 from benchforge.agents import QuestionGeneratorAgent
 from benchforge.models import (
     BaseModelClient,

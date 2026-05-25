@@ -50,7 +50,7 @@ from benchforge.utils.planning import (
     build_next_step_plan,
     identify_global_gap,
 )
-from benchforge.artifacts.store import ArtifactStore
+from benchforge.utils.artifact_store import ArtifactStore
 
 
 class QuestionGeneratorAgent:
