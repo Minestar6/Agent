@@ -34,10 +34,10 @@ from .core import (
     QuestionGenerationInput,
 )
 
-# Agent相关Schema（新增）
-from .agent_decision import ControlDecision, DecisionReasoning, AgentDecision
+# 决策追踪相关Schema
+from .agent_decision import ControlDecision
+from .decision_trace import DecisionTrace, EvidenceSummary, GapInfo, GuardReport
 from .observation import Observation
-from .agent_intent import AgentIntent
 
 __all__ = [
     # 核心枚举
@@ -72,10 +72,11 @@ __all__ = [
     "GenerationConfig",
     "QuestionGenerationInput",
 
-    # Agent相关Schema（新增）
+    # 决策追踪相关Schema
     "ControlDecision",
-    "DecisionReasoning",
-    "AgentDecision",
+    "DecisionTrace",
+    "EvidenceSummary",
+    "GapInfo",
+    "GuardReport",
     "Observation",
-    "AgentIntent",
 ]

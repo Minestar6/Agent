@@ -1,68 +1,38 @@
-"""Agent观察相关Schema。"""
+"""Observation Schema（Plan-Driven 简化版）。"""
 
 from dataclasses import dataclass, field
 from typing import Any
-import json
+
+from benchforge.schemas.decision_trace import EvidenceSummary, GapInfo
 
 
 @dataclass
 class Observation:
-    """Agent观察到的状态（摘要化）。
+    """摘要化观察（核心字段）。
 
-    关键原则：
-    - 不直接喂完整数据
-    - 压缩历史为模式摘要
-    - 控制Prompt长度
+    不直接喂完整数据，只提取决策所需的关键信息。
     """
-    topic: str
+    # 核心字段
+    plan: Any  # GenerationPlan（避免循环导入）
+    topic_state: Any  # TopicState
+    main_gap: GapInfo | None
+    progress: float  # 整体完成进度 0.0-1.0
 
-    # 摘要化的覆盖率
-    coverage_summary: str          # "已完成75%，主要缺口qa:hard"
-    primary_gap: str               # "qa:hard"
-    gap_remaining: int             # 5
+    # 证据摘要
+    evidence_summary: EvidenceSummary = field(default_factory=EvidenceSummary)
 
-    # 摘要化的历史（不是完整history）
-    compressed_history: list[str]  # ["连续3轮qa:hard生成不足", "多证据成功率高"]
-
-    # 关键指标
-    round: int
-    max_rounds: int
-    evidence_sufficiency: str      # "sufficient" | "partial" | "insufficient"
-    single_evidence_efficiency: float
-    multi_evidence_efficiency: float
-
-    # 可选的约束信息
-    constraints: dict[str, Any] = field(default_factory=dict)
-
-    def to_prompt_text(self) -> str:
-        """转换为Prompt文本（控制长度）。
-
-        Returns:
-            适合直接喂给LLM的文本。
-        """
-        history_text = "; ".join(self.compressed_history[-3:]) if self.compressed_history else "无"
-
-        return f"""主题: {self.topic}
-轮数: {self.round}/{self.max_rounds}
-覆盖率: {self.coverage_summary}
-主缺口: {self.primary_gap} (剩余{self.gap_remaining}题)
-证据状态: {self.evidence_sufficiency}
-单证据效率: {self.single_evidence_efficiency:.2f}
-多证据效率: {self.multi_evidence_efficiency:.2f}
-历史摘要: {history_text}"""
+    # 附加信息
+    round_num: int = 0
+    max_rounds: int = 10
+    language: str = "en"
 
     def to_dict(self) -> dict[str, Any]:
         """转换为字典。"""
         return {
-            "topic": self.topic,
-            "coverage_summary": self.coverage_summary,
-            "primary_gap": self.primary_gap,
-            "gap_remaining": self.gap_remaining,
-            "compressed_history": self.compressed_history,
-            "round": self.round,
+            "topic": self.topic_state.topic if self.topic_state else None,
+            "progress": self.progress,
+            "main_gap": self.main_gap.to_dict() if self.main_gap else None,
+            "evidence_summary": self.evidence_summary.to_dict(),
+            "round_num": self.round_num,
             "max_rounds": self.max_rounds,
-            "evidence_sufficiency": self.evidence_sufficiency,
-            "single_evidence_efficiency": self.single_evidence_efficiency,
-            "multi_evidence_efficiency": self.multi_evidence_efficiency,
-            "constraints": self.constraints,
         }
