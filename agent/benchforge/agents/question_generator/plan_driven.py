@@ -87,7 +87,7 @@ class PlanDrivenQuestionGenerationAgent:
         self.observation_builder = ObservationBuilder()
         self.scheduler = Scheduler()
         self.decision_validator = DecisionValidator()
-        self.evidence_manager = EvidenceManager(config)
+        self.evidence_manager = EvidenceManager(config, model_client)
         self.generator = Generator()
         self.validator = Validator()
         self.action_executor = ActionExecutor(

@@ -1,7 +1,11 @@
 """EvidenceManager 模块：检索、分块、证据池、采样。"""
 
+from pathlib import Path
+import re
 from typing import Any
 from dataclasses import dataclass
+
+from loguru import logger
 
 from benchforge.utils import (
     search_wikipedia,
@@ -39,15 +43,18 @@ class EvidenceManager:
     - 扩展检索
     """
 
-    def __init__(self, config: Any):
+    def __init__(self, config: Any, model_client: Any | None = None):
         """初始化证据管理器。
 
         Args:
             config: 配置对象
+            model_client: 模型客户端（用于生成文档摘要）
         """
         self.config = config
+        self.model_client = model_client
         self.multi_chunk_builder = MultiChunkBuilder()
         self.document_summaries: dict[str, str] = {}
+        self.used_chunk_combinations: set[frozenset[str]] = set()
 
     async def prepare_evidence(
         self,
@@ -69,6 +76,9 @@ class EvidenceManager:
         Returns:
             (chunk 列表, 证据池)
         """
+        # 新主题，重置组合历史
+        self.used_chunk_combinations.clear()
+
         # 检索文档
         search_results = search_wikipedia(
             query=topic,
@@ -134,12 +144,123 @@ class EvidenceManager:
         if not chunks:
             return document.summary or ""
 
-        # 简化实现：返回前三个 chunk 的摘要
-        summaries = []
-        for chunk in chunks[:3]:
-            summaries.append(chunk.text[:200])
+        # 如果没有 model_client，使用简化实现
+        if not self.model_client:
+            summaries = []
+            for chunk in chunks[:3]:
+                summaries.append(chunk.text[:200])
+            return " | ".join(summaries)
 
-        return " | ".join(summaries)
+        # Stage 1: 生成 chunk summaries
+        chunk_summaries = []
+
+        for chunk in chunks:
+            try:
+                prompt = self._get_summarization_prompt(chunk.text)
+
+                response = await self.model_client.complete(
+                    model=getattr(self.model_client, 'model_name', 'gpt-4o'),
+                    messages=[{"role": "user", "content": prompt}],
+                    temperature=0.3,
+                    max_tokens=300,
+                )
+
+                # 提取摘要
+                import re
+                summary_match = re.search(
+                    r'<final_summary>(.*?)</final_summary>',
+                    response["text"],
+                    re.DOTALL | re.IGNORECASE
+                )
+                if summary_match:
+                    summary = summary_match.group(1).strip()
+                else:
+                    summary = response["text"].strip()[:200]
+
+                chunk_summaries.append(summary)
+
+            except Exception as e:
+                logger.warning(f"Failed to summarize chunk {chunk.chunk_id}: {e}")
+                chunk_summaries.append("")
+
+        # Stage 2: 如果有多个 chunk，合并摘要
+        if len(chunk_summaries) > 1:
+            try:
+                bullet_list = "\n".join(f"- {s}" for s in chunk_summaries if s)
+                combine_prompt = self._get_combine_summaries_prompt(bullet_list)
+
+                response = await self.model_client.complete(
+                    model=getattr(self.model_client, 'model_name', 'gpt-4o'),
+                    messages=[{"role": "user", "content": combine_prompt}],
+                    temperature=0.3,
+                    max_tokens=500,
+                )
+
+                import re
+                final_match = re.search(
+                    r'<final_summary>(.*?)</final_summary>',
+                    response["text"],
+                    re.DOTALL | re.IGNORECASE
+                )
+                if final_match:
+                    return final_match.group(1).strip()
+                else:
+                    return response["text"].strip()
+            except Exception as e:
+                logger.warning(f"Failed to combine summaries: {e}")
+
+        # 如果只有一个 chunk 或合并失败，返回第一个摘要
+        return chunk_summaries[0] if chunk_summaries else document.summary or ""
+
+    def _get_summarization_prompt(self, text: str) -> str:
+        """获取 summarization prompt（从文件加载）。
+
+        Args:
+            text: 文本内容
+
+        Returns:
+            prompt
+        """
+        prompt_path = (
+            Path(__file__).parent.parent.parent.parent
+            / "prompts" / "question_generator" / "summarization_user_prompt.md"
+        )
+
+        if prompt_path.exists():
+            with open(prompt_path, "r", encoding="utf-8") as f:
+                template = f.read()
+            return template.replace("{document}", text)
+        else:
+            return f"""<document>
+{text}
+</document>
+
+Provide a concise summary in <final_summary> tags."""
+
+    def _get_combine_summaries_prompt(self, bullet_list: str) -> str:
+        """获取合并摘要 prompt（从文件加载）。
+
+        Args:
+            bullet_list: chunk 摘要列表
+
+        Returns:
+            prompt
+        """
+        prompt_path = (
+            Path(__file__).parent.parent.parent.parent
+            / "prompts" / "question_generator" / "combine_summaries_user_prompt.md"
+        )
+
+        if prompt_path.exists():
+            with open(prompt_path, "r", encoding="utf-8") as f:
+                template = f.read()
+            return template.replace("{chunk_summaries}", bullet_list)
+        else:
+            return f"""<chunk_summaries>
+{bullet_list}
+</chunk_summaries>
+
+Provide a concise overview in <final_summary> tags."""
 
     def _build_evidence_pool(
         self,
@@ -206,7 +327,7 @@ class EvidenceManager:
         round_num: int = 1,
         remaining: int = 1,
     ) -> Any:
-        """采样证据。
+        """采样证据，确保 chunk 组合唯一。
 
         使用采样策略：
         - 第 1 轮：BroadExplorationSampling（广度探索）
@@ -233,14 +354,33 @@ class EvidenceManager:
         # 计算请求数量（冗余策略）
         num_evidence = self._calculate_num_evidence(remaining)
 
-        # 执行采样
-        batch = sampler.sample(
-            pool=evidence_pool,
-            target_mode=target_mode,
-            target_difficulty=target_difficulty,
-            num_evidence=num_evidence,
-            prefer_multi_chunk=prefer_multi_chunk,
-        )
+        # 重试采样直到获得唯一组合
+        max_retries = 5
+        batch = None
+
+        for attempt in range(max_retries):
+            batch = sampler.sample(
+                pool=evidence_pool,
+                target_mode=target_mode,
+                target_difficulty=target_difficulty,
+                num_evidence=num_evidence,
+                prefer_multi_chunk=prefer_multi_chunk,
+            )
+
+            # 检查组合是否唯一
+            combo_key = frozenset(batch.single_chunk_ids + batch.multi_chunk_ids)
+
+            if combo_key not in self.used_chunk_combinations:
+                # 组合唯一，记录并返回
+                self.used_chunk_combinations.add(combo_key)
+                break
+
+            logger.debug(f"Duplicate chunk combination detected, retry {attempt + 1}")
+        else:
+            # 重试用尽，强制采样未使用的组合
+            batch = self._force_unique_sample(
+                evidence_pool, target_mode, target_difficulty, num_evidence
+            )
 
         # 设置请求数量
         min_questions, target_questions = self._calculate_batch_request_counts(remaining)
@@ -269,6 +409,91 @@ class EvidenceManager:
         """
         # 最多 5 个证据单元
         return min(5, remaining_count + 2)
+
+    def _force_unique_sample(
+        self,
+        evidence_pool: Any,
+        target_mode: str,
+        target_difficulty: str,
+        num_evidence: int,
+    ) -> Any:
+        """强制采样未使用过的 chunk 组合。
+
+        当重试次数用尽时调用，从未使用的单元中选择分数最高的组合。
+
+        Args:
+            evidence_pool: 证据池
+            target_mode: 目标模式
+            target_difficulty: 目标难度
+            num_evidence: 需要的证据单元数量
+
+        Returns:
+            生成批次
+        """
+        from benchforge.schemas import GenerationBatch
+
+        # 获取所有已使用的 chunk ID
+        used_ids = set()
+        for combo in self.used_chunk_combinations:
+            used_ids.update(combo)
+
+        # 过滤未使用的单元
+        unused_single = [
+            u for u in evidence_pool.single_chunks if u.chunk_id not in used_ids
+        ]
+        unused_multi = [
+            u for u in evidence_pool.multi_chunks if u.unit_id not in used_ids
+        ]
+
+        # 根据目标模式选择分数
+        score_key = "mcq_score" if target_mode == "multiple_choice" else "qa_score"
+
+        # 选择分数最高的未使用单元
+        selected_single = sorted(
+            unused_single,
+            key=lambda u: getattr(u, score_key),
+            reverse=True
+        )[:num_evidence]
+
+        # 硬题优先使用 multi chunk
+        if target_difficulty == "hard" and unused_multi:
+            target_multi_count = max(1, num_evidence // 2)
+            selected_multi = sorted(
+                unused_multi,
+                key=lambda u: getattr(u, score_key),
+                reverse=True
+            )[:target_multi_count]
+        else:
+            selected_multi = []
+
+        # 如果没有足够的未使用单元，降低选择数量
+        if not selected_single and not selected_multi:
+            logger.warning("No unused chunks available, returning empty batch")
+            return GenerationBatch(
+                topic=evidence_pool.topic,
+                target_mode=target_mode,
+                target_difficulty=target_difficulty,
+                remaining_count=num_evidence,
+                single_chunk_ids=[],
+                multi_chunk_ids=[],
+                prompt_template_id="mcq_generation_v1" if target_mode == "multiple_choice" else "qa_generation_v1",
+            )
+
+        # 记录新组合
+        combo_key = frozenset(
+            [u.chunk_id for u in selected_single] + [u.unit_id for u in selected_multi]
+        )
+        self.used_chunk_combinations.add(combo_key)
+
+        return GenerationBatch(
+            topic=evidence_pool.topic,
+            target_mode=target_mode,
+            target_difficulty=target_difficulty,
+            remaining_count=num_evidence,
+            single_chunk_ids=[u.chunk_id for u in selected_single],
+            multi_chunk_ids=[u.unit_id for u in selected_multi],
+            prompt_template_id="mcq_generation_v1" if target_mode == "multiple_choice" else "qa_generation_v1",
+        )
 
     def _calculate_batch_request_counts(
         self,
