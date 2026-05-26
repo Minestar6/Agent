@@ -23,11 +23,16 @@ class Scheduler:
     2. hard 缺口 + 证据不足 → expand_retrieval
     3. hard 缺口 + 未启用多 chunk → enable_multi_chunk
     4. 默认 → continue_generation
+
+    Fallback 分级策略：
+    第 1 次: expand_retrieval（补证据）
+    第 2 次: enable_multi_chunk（换策略）
+    第 3 次: defer_gap（跳过）
     """
 
     # 阈值常量
     MIN_HARD_EVIDENCE = 5  # hard 缺口需要的最小证据数量
-    STUCK_FALLBACK_ACTIONS = ["expand_retrieval", "defer_topic"]
+    MAX_FALLBACKS_PER_GAP = 3  # 每个 gap 最大 fallback 次数
 
     def decide(self, observation: Observation) -> ControlDecision:
         """基于规则链选择下一步动作。
@@ -46,7 +51,7 @@ class Scheduler:
         if gap is None:
             return ControlDecision(
                 action="finish_topic",
-                params={},
+                params={"topic": state.topic},
                 note="all gaps filled",
                 priority=10,
             )
@@ -104,7 +109,11 @@ class Scheduler:
         observation: Observation,
         guard_report: GuardReport,
     ) -> ControlDecision:
-        """LoopGuard 触发时的 fallback 决策。
+        """LoopGuard 触发时的 fallback 决策（分级策略）。
+
+        第 1 次失败：补证据
+        第 2 次失败：换策略
+        第 3 次失败：跳过 / defer，不再继续尝试
 
         Args:
             observation: 观察摘要
@@ -113,15 +122,27 @@ class Scheduler:
         Returns:
             fallback 控制决策
         """
-        state = observation.topic_state
+        gap = observation.main_gap
+        gap_key = gap.key if gap else "__topic__"
+        fallback_count = observation.fallback_count_by_gap.get(gap_key, 0)
 
-        # 选择第一个建议动作
-        action = guard_report.suggested_actions[0]
+        if fallback_count == 0:
+            action = "expand_retrieval"
+            note = "first fallback: try gap-specific evidence expansion"
+        elif fallback_count == 1:
+            action = "enable_multi_chunk"
+            note = "second fallback: try multi-chunk evidence composition"
+        else:
+            action = "defer_gap"
+            note = "third fallback: stop retrying this gap and record limitation"
 
         return ControlDecision(
             action=action,
-            params={"topic": state.topic},
-            note=f"fallback due to stuck loop: {guard_report.reason}",
+            params={
+                "topic": observation.topic_state.topic,
+                "gap_key": gap_key,
+            },
+            note=f"{note}; stuck reason: {guard_report.reason}",
             priority=20,
         )
 
@@ -140,5 +161,6 @@ class Scheduler:
             "enable_multi_chunk",
             "continue_generation",
             "defer_topic",
+            "defer_gap",
         }
         return action in valid_actions

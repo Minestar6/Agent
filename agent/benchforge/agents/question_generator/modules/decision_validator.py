@@ -75,3 +75,57 @@ class DecisionValidator:
             是否有效
         """
         return len(issues) == 0
+
+    def safe_fallback_decision(
+        self,
+        observation: Observation,
+        issues: list[str],
+    ) -> ControlDecision:
+        """生成安全的 fallback 决策。
+
+        根据当前状态选择最安全的 fallback 动作：
+        1. 如果有缺口 → continue_generation（最安全）
+        2. 如果无缺口 → finish_topic
+        3. 如果达到最大轮数 → defer_topic
+
+        Args:
+            observation: 观察摘要
+            issues: 验证问题列表
+
+        Returns:
+            安全的 fallback 决策
+        """
+        state = observation.topic_state
+
+        # 如果达到最大轮数，延迟主题
+        if observation.round_num >= observation.max_rounds:
+            return ControlDecision(
+                action="defer_topic",
+                params={"topic": state.topic},
+                note=f"safe fallback: max rounds reached ({observation.max_rounds})",
+                priority=20,
+            )
+
+        # 如果有缺口，继续生成
+        if observation.main_gap is not None:
+            gap = observation.main_gap
+            return ControlDecision(
+                action="continue_generation",
+                params={
+                    "topic": state.topic,
+                    "gap_key": gap.key,
+                    "target_mode": gap.mode,
+                    "target_difficulty": gap.difficulty,
+                    "remaining": gap.remaining,
+                },
+                note=f"safe fallback: continuing generation for gap '{gap.key}'",
+                priority=15,
+            )
+
+        # 无缺口，完成主题
+        return ControlDecision(
+            action="finish_topic",
+            params={"topic": state.topic},
+            note="safe fallback: all gaps filled",
+            priority=10,
+        )

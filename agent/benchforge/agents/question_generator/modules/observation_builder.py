@@ -28,6 +28,7 @@ class ObservationBuilder:
         evidence_pool: Any,
         evidence_stats: Any,
         progress: float,
+        fallback_count_by_gap: dict[str, int] | None = None,
     ) -> Observation:
         """构建观察摘要。
 
@@ -38,6 +39,7 @@ class ObservationBuilder:
             evidence_pool: 证据池
             evidence_stats: 证据统计
             progress: 整体完成进度
+            fallback_count_by_gap: Fallback 计数
 
         Returns:
             观察摘要
@@ -59,6 +61,7 @@ class ObservationBuilder:
             round_num=topic_state.current_round,
             max_rounds=plan.max_rounds_per_topic if plan else 10,
             language=plan.language if plan else "en",
+            fallback_count_by_gap=fallback_count_by_gap or {},
         )
 
     def _identify_main_gap(self, state: TopicState) -> GapInfo | None:

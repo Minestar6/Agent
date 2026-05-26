@@ -8,7 +8,7 @@ class LoopGuard:
 
     职责：
     - 检测无进展循环
-    - 提供 fallback 建议
+    - 提供分级 fallback 建议
 
     触发条件：
     连续 N 轮：
@@ -16,6 +16,11 @@ class LoopGuard:
       且 accepted_count = 0
 
     N 默认为 3
+
+    Fallback 策略（由 Scheduler 实现）:
+    第 1 次: expand_retrieval（扩展检索）
+    第 2 次: enable_multi_chunk（启用多 chunk）
+    第 3 次: defer_gap（跳过缺口）
     """
 
     def __init__(self, stuck_threshold: int = 3):
@@ -77,7 +82,7 @@ class LoopGuard:
             return GuardReport(
                 is_stuck=True,
                 stuck_rounds=len(recent_gaps),
-                suggested_actions=["expand_retrieval", "defer_topic"],
+                suggested_actions=[],  # 不再使用，分级逻辑在 Scheduler 中
                 reason=f"stuck for {len(recent_gaps)} rounds: gap_total={recent_gaps[0]}, accepted_count=0",
             )
 

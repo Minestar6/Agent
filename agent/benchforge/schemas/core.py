@@ -74,7 +74,7 @@ class NextStepAction(str, Enum):
 class SourceDocument(BaseModel):
     """源文档模式。"""
 
-    document_id: str = Field(default_factory=lambda: f"doc_{uuid4().hex[:12]}")
+    document_id: str
     run_id: str
     topic: str
     language: str = "en"
@@ -198,6 +198,7 @@ class TopicState(BaseModel):
     topic: str
     status: TopicStatus = TopicStatus.PENDING
     current_round: int = 0
+    prefer_multi_chunk: bool = False
     target_counts: dict[str, int] = Field(default_factory=dict)
     completed_counts: dict[str, int] = Field(default_factory=dict)
     remaining_counts: dict[str, int] = Field(default_factory=dict)

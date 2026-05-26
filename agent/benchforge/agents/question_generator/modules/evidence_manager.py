@@ -55,6 +55,7 @@ class EvidenceManager:
         self.multi_chunk_builder = MultiChunkBuilder()
         self.document_summaries: dict[str, str] = {}
         self.used_chunk_combinations: set[frozenset[str]] = set()
+        self.retrieved_urls: set[str] = set()  # 已抓取的 URL，用于去重
 
     async def prepare_evidence(
         self,
@@ -76,8 +77,9 @@ class EvidenceManager:
         Returns:
             (chunk 列表, 证据池)
         """
-        # 新主题，重置组合历史
+        # 新主题，重置组合历史和 URL 记录
         self.used_chunk_combinations.clear()
+        self.retrieved_urls.clear()
 
         # 检索文档
         search_results = search_wikipedia(
@@ -93,6 +95,14 @@ class EvidenceManager:
         all_chunks: list[Any] = []
 
         for result in search_results:
+            # 去重检查：跳过已抓取的 URL
+            if result.url in self.retrieved_urls:
+                logger.debug(f"Skipping duplicate URL (initial): {result.url}")
+                continue
+
+            # 记录已抓取的 URL
+            self.retrieved_urls.add(result.url)
+
             document = fetch_wikipedia_page(
                 result=result,
                 run_id=plan.run_id,
@@ -524,7 +534,7 @@ Provide a concise overview in <final_summary> tags."""
         run_id: str,
         evidence_pool: Any,
     ) -> ExpandResult:
-        """扩展检索。
+        """扩展检索（带去重）。
 
         Args:
             topic: 主题名称
@@ -539,6 +549,7 @@ Provide a concise overview in <final_summary> tags."""
         from benchforge.schemas import TopicState
 
         all_chunks: list[Any] = []
+        skipped_urls: list[str] = []
 
         for query in queries:
             results = search_wikipedia(
@@ -548,6 +559,15 @@ Provide a concise overview in <final_summary> tags."""
             )
 
             for result in results:
+                # 去重检查：跳过已抓取的 URL
+                if result.url in self.retrieved_urls:
+                    skipped_urls.append(result.url)
+                    logger.debug(f"Skipping duplicate URL: {result.url}")
+                    continue
+
+                # 记录已抓取的 URL
+                self.retrieved_urls.add(result.url)
+
                 document = fetch_wikipedia_page(
                     result=result,
                     run_id=run_id,
@@ -569,6 +589,9 @@ Provide a concise overview in <final_summary> tags."""
                 self.document_summaries[document.document_id] = summary
 
                 all_chunks.extend(chunks)
+
+        if skipped_urls:
+            logger.info(f"Skipped {len(skipped_urls)} duplicate URLs during expansion")
 
         # 构建新单元
         single_units = build_evidence_pool_from_chunks(

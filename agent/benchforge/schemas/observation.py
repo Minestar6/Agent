@@ -26,6 +26,9 @@ class Observation:
     max_rounds: int = 10
     language: str = "en"
 
+    # Fallback 追踪
+    fallback_count_by_gap: dict[str, int] = field(default_factory=dict)
+
     def to_dict(self) -> dict[str, Any]:
         """转换为字典。"""
         return {
@@ -35,4 +38,5 @@ class Observation:
             "evidence_summary": self.evidence_summary.to_dict(),
             "round_num": self.round_num,
             "max_rounds": self.max_rounds,
+            "fallback_count_by_gap": self.fallback_count_by_gap,
         }

@@ -51,6 +51,7 @@ class AgentRuntimeState:
     step_id: int = 0
     round_num: int = 0
     accepted_count: int = 0
+    fallback_count_by_gap: dict[str, int] = field(default_factory=dict)
 
 
 class PlanDrivenQuestionGenerationAgent:
@@ -223,8 +224,9 @@ class PlanDrivenQuestionGenerationAgent:
             logger.warning(f"No evidence pool for topic: {topic}")
             return
 
+        # 更新轮次计数（全局和主题级别）
+        state.current_round += 1
         self.runtime_state.round_num += 1
-
         # 1. 构建观察
         observation = self.observation_builder.build(
             plan=plan,
@@ -233,9 +235,11 @@ class PlanDrivenQuestionGenerationAgent:
             evidence_pool=evidence_pool,
             evidence_stats=evidence_pool.stats,
             progress=self.planner.get_progress(),
+            fallback_count_by_gap=self.runtime_state.fallback_count_by_gap,
         )
 
         progress_before = observation.progress
+        original_decision = None
 
         # 2. 规则决策
         decision = self.scheduler.decide(observation)
@@ -247,8 +251,10 @@ class PlanDrivenQuestionGenerationAgent:
             for issue in issues:
                 logger.warning(f"Decision validation issue: {issue}")
 
-            # 有严重错误，使用默认决策继续
-            logger.warning("Decision validation failed, using fallback")
+            # 有严重错误，使用安全 fallback
+            logger.warning("Decision validation failed, using safe fallback")
+            original_decision = decision
+            decision = self.decision_validator.safe_fallback_decision(observation, issues)
 
         # 4. 检查卡死
         gap_total = self.planner.get_total_gap()
@@ -259,7 +265,14 @@ class PlanDrivenQuestionGenerationAgent:
                 f"Loop stuck for {guard_report.stuck_rounds} rounds, "
                 f"reason: {guard_report.reason}"
             )
+            original_decision = decision
             decision = self.scheduler.fallback_decision(observation, guard_report)
+
+            # 记录 fallback 计数
+            gap_key = observation.main_gap.key if observation.main_gap else "__topic__"
+            self.runtime_state.fallback_count_by_gap[gap_key] = (
+                self.runtime_state.fallback_count_by_gap.get(gap_key, 0) + 1
+            )
 
         # 记录推理（只写日志）
         logger.info(f"Decision: action={decision.action}, note={decision.note}")
@@ -272,6 +285,8 @@ class PlanDrivenQuestionGenerationAgent:
             "model_client": self.model_client,
             "language": plan.language,
             "run_id": plan.run_id,
+            "round_num": state.current_round,
+            "state": self.runtime_state,
         }
 
         result = await self.action_executor.execute(decision, context)
