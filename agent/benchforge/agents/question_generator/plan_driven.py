@@ -263,10 +263,11 @@ class PlanDrivenQuestionGenerationAgent:
             decision = self.decision_validator.safe_fallback_decision(observation, issues)
 
         # 4. 检查卡死
+        _TERMINAL_ACTIONS = {"defer_topic", "finish_topic"}
         gap_total = self.planner.get_total_gap()
         guard_report = self.loop_guard.check(observation)
 
-        if guard_report.is_stuck:
+        if guard_report.is_stuck and decision.action not in _TERMINAL_ACTIONS:
             logger.warning(
                 f"Loop stuck for {guard_report.stuck_rounds} rounds, "
                 f"reason: {guard_report.reason}"
@@ -297,18 +298,16 @@ class PlanDrivenQuestionGenerationAgent:
 
         result = await self.action_executor.execute(decision, context)
 
+        # 6. 应用结果（无论成功与否都先记录 LoopGuard，避免失败轮次被跳过）
+        gap_total_after = self.planner.get_total_gap()
+        accepted_count = result.output.get("num_accepted", 0) if result.success else 0
+        self.loop_guard.record_round(gap_total_after, accepted_count)
+
         if not result.success:
             logger.error(f"Action execution failed: {result.error}")
             return
 
-        # 6. 应用结果
         self.validator.apply_result(result, self.planner, self.runtime_state)
-
-        # 更新 LoopGuard
-        gap_total_after = self.planner.get_total_gap()
-        accepted_count = result.output.get("num_accepted", 0)
-
-        self.loop_guard.record_round(gap_total_after, accepted_count)
 
         # 收集题目
         questions = result.output.get("questions", [])

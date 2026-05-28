@@ -202,11 +202,15 @@ class Planner:
             topic: 主题名称
 
         Returns:
-            是否完成
+            是否完成（含 DEFERRED 状态）
         """
         state = self.topic_states.get(topic)
         if not state:
             return False
+
+        # DEFERRED 和 COMPLETED 状态均视为"不再处理"
+        if state.status in (TopicStatus.DEFERRED, TopicStatus.COMPLETED):
+            return True
 
         for key, target in state.target_counts.items():
             completed = state.completed_counts.get(key, 0)
