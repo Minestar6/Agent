@@ -130,7 +130,7 @@ class PlanDrivenQuestionGenerationAgent:
         Returns:
             生成报告
         """
-        logger.info(f"Starting Plan-Driven Agent for run: {plan.run_id}")
+        logger.info(f"Starting Plan-Driven Agent for task: {plan.task_id}, run: {plan.run_id}")
         logger.info(f"Topics: {plan.topics}")
         logger.info(f"Goal: {plan.goal}")
 
@@ -177,6 +177,12 @@ class PlanDrivenQuestionGenerationAgent:
         # 准备证据
         chunks, evidence_pool = await self.evidence_manager.prepare_evidence(topic, plan)
         self.evidence_pools[topic] = evidence_pool
+
+        # 如果没有证据池，标记主题为延期并跳过
+        if not evidence_pool or not chunks:
+            logger.warning(f"No evidence retrieved for topic: {topic}, deferring")
+            state.status = TopicStatus.DEFERRED
+            return
 
         # 重置 LoopGuard
         self.loop_guard.reset()
@@ -387,6 +393,7 @@ class PlanDrivenQuestionGenerationAgent:
             }
 
         return GenerationReport(
+            task_id=plan.task_id,
             run_id=plan.run_id,
             goal=plan.goal,
             topics=plan.topics,

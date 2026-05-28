@@ -1,0 +1,92 @@
+{
+  "run_id": "my_run_002",
+  "goal": "generate practical questions",
+  "topics": [
+    "Fordism",
+    "Quantum Computing"
+  ],
+  "mode_targets": {
+    "qa": {
+      "count": 10,
+      "difficulty_distribution": {
+        "easy": 0.3,
+        "medium": 0.4,
+        "hard": 0.3
+      }
+    }
+  },
+  "topic_states": {
+    "Fordism": {
+      "topic": "Fordism",
+      "status": "completed",
+      "current_round": 3,
+      "prefer_multi_chunk": false,
+      "target_counts": {
+        "qa:easy": 2,
+        "qa:medium": 2,
+        "qa:hard": 2
+      },
+      "completed_counts": {
+        "qa:hard": 2,
+        "qa:medium": 2,
+        "qa:easy": 4
+      },
+      "remaining_counts": {
+        "qa:easy": 0,
+        "qa:medium": 0,
+        "qa:hard": 0
+      },
+      "retrieved_documents": [],
+      "available_single_chunk_ids": [],
+      "available_multi_chunk_ids": []
+    },
+    "Quantum Computing": {
+      "topic": "Quantum Computing",
+      "status": "completed",
+      "current_round": 3,
+      "prefer_multi_chunk": false,
+      "target_counts": {
+        "qa:easy": 1,
+        "qa:medium": 2,
+        "qa:hard": 1
+      },
+      "completed_counts": {
+        "qa:hard": 2,
+        "qa:medium": 3,
+        "qa:easy": 3
+      },
+      "remaining_counts": {
+        "qa:easy": 0,
+        "qa:medium": 0,
+        "qa:hard": 0
+      },
+      "retrieved_documents": [],
+      "available_single_chunk_ids": [],
+      "available_multi_chunk_ids": []
+    }
+  },
+  "global_stats": {
+    "total_rounds": 6,
+    "total_questions": 16,
+    "Fordism_evidence": {
+      "single_chunks": 11,
+      "multi_chunks": 5
+    },
+    "Quantum Computing_evidence": {
+      "single_chunks": 9,
+      "multi_chunks": 4
+    }
+  },
+  "final_counts": {
+    "qa:hard": 4,
+    "qa:medium": 5,
+    "qa:easy": 7
+  },
+  "remaining_gaps": {
+    "qa:easy": 0,
+    "qa:medium": 0,
+    "qa:hard": 0
+  },
+  "status": "completed",
+  "created_at": "2026-05-26 12:11:28.637815"
+}

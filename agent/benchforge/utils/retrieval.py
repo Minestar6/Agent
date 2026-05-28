@@ -51,7 +51,11 @@ def search_wikipedia(
             "format": "json",
         }
 
-        response = requests.get(api_url, params=params, timeout=10)
+        headers = {
+            "User-Agent": "BenchForge/0.1.0 (https://github.com/benchforge)"
+        }
+
+        response = requests.get(api_url, params=params, headers=headers, timeout=10)
         response.raise_for_status()
         data = response.json()
 
@@ -89,8 +93,12 @@ def fetch_wikipedia_page(
     # 生成确定性 document_id
     document_id = _generate_document_id(result.url)
 
+    headers = {
+        "User-Agent": "BenchForge/0.1.0 (https://github.com/benchforge)"
+    }
+
     try:
-        response = requests.get(result.url, timeout=15)
+        response = requests.get(result.url, headers=headers, timeout=15)
         response.raise_for_status()
 
         soup = BeautifulSoup(response.text, "html.parser")

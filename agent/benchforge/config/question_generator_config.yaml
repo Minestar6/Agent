@@ -3,8 +3,9 @@
 
 # 运行时基础配置
 run:
-  run_id: "run_001"
-  output_path: "./runs/${run_id}"
+  task_id: "task_001"            # 用户需求ID
+  run_id: "run_001"              # 运行ID
+  output_path: "./runs/${task_id}/${run_id}"
   language: "en"
   domain: null  # 可选：economics, science, history 等
 
@@ -38,10 +39,17 @@ retrieval:
   request_timeout: 10             # 请求超时（秒）
   rate_limit_delay: 0.5           # 请求间隔（秒）
 
-# 文档分块配置
+# 文档分块配置（参考 YourBench MMLU 复现参数）
 chunking:
-  chunk_size: 1200                # 每块 token 数
-  overlap: 150                    # 块间重叠 token 数
+  # 题目生成分段
+  chunk_size: 2048                # 每块 token 数（MMLU 风格：信息密集型）
+  overlap: 300                    # 块间重叠 token 数（保证上下文连贯）
+  encoding: "cl100k_base"         # tiktoken 编码
+
+# 文档总结分段配置（参考 YourBench）
+summarization_chunking:
+  chunk_size: 8192                # 总结阶段块大小（更大块减少 LLM 调用次数）
+  overlap: 512                    # 总结阶段块重叠
   encoding: "cl100k_base"         # tiktoken 编码
 
 # 问题生成配置
@@ -49,13 +57,6 @@ generation:
   questions_per_chunk: 2          # 每块生成问题数
   question_mode: "open-ended"      # open-ended, multi-choice
   prompt_template_id: "question_generation_v1"
-
-# 提示模板配置
-prompt:
-  template_path: "./prompts/question_generation.md"
-  system_prompt: |
-    你是一个专业的问答题目生成专家。
-    根据给定的文本生成高质量问题。
 
 # 输出配置
 output:

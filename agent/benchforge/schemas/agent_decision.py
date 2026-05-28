@@ -16,11 +16,17 @@ class ControlDecision:
     note: str = ""
     priority: int = 0
 
-    def to_dict(self) -> dict[str, Any]:
-        """转换为字典。"""
-        return {
-            "action": self.action,
-            "params": self.params,
-            "note": self.note,
-            "priority": self.priority,
-        }
+@dataclass
+class DecisionReasoning:
+    """决策推理：记录决策的推理过程。"""
+    summary: str
+    primary_gap: str
+    selected_strategy: str
+    confidence: float = 1.0
+
+
+@dataclass
+class AgentDecision:
+    """Agent决策：包含控制决策和推理。"""
+    control: ControlDecision
+    reasoning: DecisionReasoning

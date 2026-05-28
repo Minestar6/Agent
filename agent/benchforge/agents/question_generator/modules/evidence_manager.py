@@ -113,16 +113,16 @@ class EvidenceManager:
             if document.status.value == "failed":
                 continue
 
-            # 分块
+            # Stage 1: 生成文档摘要（使用大 chunk 参数，降低成本）
+            summary = await self._generate_document_summary(document)
+            self.document_summaries[document.document_id] = summary
+
+            # Stage 2: 题目生成分块（小 chunk）
             chunks = chunk_document(
                 document=document,
                 chunk_size=self.config.chunking.chunk_size,
                 overlap=self.config.chunking.overlap,
             )
-
-            # 生成文档摘要
-            summary = await self._generate_document_summary(document, chunks)
-            self.document_summaries[document.document_id] = summary
 
             all_chunks.extend(chunks)
 
@@ -134,37 +134,49 @@ class EvidenceManager:
     async def _generate_document_summary(
         self,
         document: Any,
-        chunks: list[Any],
     ) -> str:
-        """生成文档摘要。
+        """生成文档摘要（使用独立的大 chunk 参数，降低成本）。
 
-        使用 LLM 生成摘要（复用 Yourbench prompts）。
+        参考 YourBench 实现：
+        - 使用独立的总结分段参数（summarization_chunking）
+        - 大块减少 LLM 调用次数
 
         步骤：
-        1. 对每个 chunk 生成摘要
-        2. 如果有多个 chunk，合并摘要
+        1. 用总结分段参数对文档进行分段
+        2. 对每个大 chunk 生成摘要
+        3. 如果有多个 chunk，合并摘要
 
         Args:
             document: 源文档
-            chunks: chunk 列表
 
         Returns:
             文档摘要
         """
-        if not chunks:
+        if not document.content:
+            return document.summary or ""
+
+        # 使用总结分段参数进行分段（大 chunk，减少调用次数）
+        from benchforge.utils import chunk_document
+        summarization_chunks = chunk_document(
+            document=document,
+            chunk_size=self.config.summarization_chunking.chunk_size,
+            overlap=self.config.summarization_chunking.overlap,
+        )
+
+        if not summarization_chunks:
             return document.summary or ""
 
         # 如果没有 model_client，使用简化实现
         if not self.model_client:
             summaries = []
-            for chunk in chunks[:3]:
-                summaries.append(chunk.text[:200])
+            for chunk in summarization_chunks[:2]:
+                summaries.append(chunk.text[:300])
             return " | ".join(summaries)
 
-        # Stage 1: 生成 chunk summaries
+        # Stage 1: 生成 chunk summaries（大 chunk，调用次数少）
         chunk_summaries = []
 
-        for chunk in chunks:
+        for chunk in summarization_chunks:
             try:
                 prompt = self._get_summarization_prompt(chunk.text)
 
@@ -172,11 +184,10 @@ class EvidenceManager:
                     model=getattr(self.model_client, 'model_name', 'gpt-4o'),
                     messages=[{"role": "user", "content": prompt}],
                     temperature=0.3,
-                    max_tokens=300,
+                    max_tokens=500,  # 增加输出长度，因为输入是更大的 chunk
                 )
 
                 # 提取摘要
-                import re
                 summary_match = re.search(
                     r'<final_summary>(.*?)</final_summary>',
                     response["text"],
@@ -185,7 +196,7 @@ class EvidenceManager:
                 if summary_match:
                     summary = summary_match.group(1).strip()
                 else:
-                    summary = response["text"].strip()[:200]
+                    summary = response["text"].strip()[:500]
 
                 chunk_summaries.append(summary)
 
@@ -203,10 +214,9 @@ class EvidenceManager:
                     model=getattr(self.model_client, 'model_name', 'gpt-4o'),
                     messages=[{"role": "user", "content": combine_prompt}],
                     temperature=0.3,
-                    max_tokens=500,
+                    max_tokens=800,  # 合并摘要需要更多 tokens
                 )
 
-                import re
                 final_match = re.search(
                     r'<final_summary>(.*?)</final_summary>',
                     response["text"],
@@ -578,15 +588,16 @@ Provide a concise overview in <final_summary> tags."""
                 if document.status.value == "failed":
                     continue
 
+                # Stage 1: 生成文档摘要（使用大 chunk 参数）
+                summary = await self._generate_document_summary(document)
+                self.document_summaries[document.document_id] = summary
+
+                # Stage 2: 题目生成分块（小 chunk）
                 chunks = chunk_document(
                     document=document,
                     chunk_size=self.config.chunking.chunk_size,
                     overlap=self.config.chunking.overlap,
                 )
-
-                # 生成摘要
-                summary = await self._generate_document_summary(document, chunks)
-                self.document_summaries[document.document_id] = summary
 
                 all_chunks.extend(chunks)
 

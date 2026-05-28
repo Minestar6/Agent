@@ -171,6 +171,7 @@ class QuestionModeTarget(BaseModel):
 class GenerationPlan(BaseModel):
     """生成计划（PlannerAgent 输出）。"""
 
+    task_id: str
     run_id: str
     goal: str
     topics: list[str]
@@ -308,6 +309,7 @@ class TaskResult(BaseModel):
 
 class GenerationReport(BaseModel):
     """生成报告。"""
+    task_id: str
     run_id: str
     goal: str
     topics: list[str]

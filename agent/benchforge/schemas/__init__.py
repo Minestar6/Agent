@@ -35,7 +35,7 @@ from .core import (
 )
 
 # 决策追踪相关Schema
-from .agent_decision import ControlDecision
+from .agent_decision import ControlDecision, DecisionReasoning, AgentDecision
 from .decision_trace import DecisionTrace, EvidenceSummary, GapInfo, GuardReport
 from .observation import Observation
 

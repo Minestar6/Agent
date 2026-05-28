@@ -68,9 +68,16 @@ class RetrievalConfig(BaseModel):
 
 
 class ChunkingConfig(BaseModel):
-    """分块配置。"""
-    chunk_size: int = 1200
-    overlap: int = 150
+    """题目生成分块配置。"""
+    chunk_size: int = 2048
+    overlap: int = 300
+    encoding: str = "cl100k_base"
+
+
+class SummarizationChunkingConfig(BaseModel):
+    """文档总结分段配置。"""
+    chunk_size: int = 8192
+    overlap: int = 512
     encoding: str = "cl100k_base"
 
 
@@ -113,8 +120,9 @@ class LoggingConfig(BaseModel):
 
 class RunConfig(BaseModel):
     """运行配置。"""
+    task_id: str = "task_001"
     run_id: str = "run_001"
-    output_path: str = "./runs/${run_id}"
+    output_path: str = "./runs/${task_id}/${run_id}"
     language: str = "en"
     domain: str | None = None
 
@@ -126,6 +134,7 @@ class QuestionGeneratorConfig(BaseModel):
     run: RunConfig = Field(default_factory=RunConfig)
     retrieval: RetrievalConfig = Field(default_factory=RetrievalConfig)
     chunking: ChunkingConfig = Field(default_factory=ChunkingConfig)
+    summarization_chunking: SummarizationChunkingConfig = Field(default_factory=SummarizationChunkingConfig)
     generation: GenerationConfig = Field(default_factory=GenerationConfig)
     validation: ValidationConfig = Field(default_factory=ValidationConfig)
     prompt: PromptConfig = Field(default_factory=PromptConfig)
@@ -133,8 +142,14 @@ class QuestionGeneratorConfig(BaseModel):
     logging: LoggingConfig = Field(default_factory=LoggingConfig)
 
     @classmethod
-    def from_yaml(cls, config_path: str | Path, run_id: str | None = None) -> "QuestionGeneratorConfig":
-        """从 YAML 文件加载配置。"""
+    def from_yaml(cls, config_path: str | Path, task_id: str | None = None, run_id: str | None = None) -> "QuestionGeneratorConfig":
+        """从 YAML 文件加载配置。
+
+        Args:
+            config_path: 配置文件路径
+            task_id: 可选，覆盖配置中的 task_id
+            run_id: 可选，覆盖配置中的 run_id
+        """
         config_path = Path(config_path)
 
         if not config_path.exists():
@@ -146,7 +161,13 @@ class QuestionGeneratorConfig(BaseModel):
         # 展开环境变量
         raw_data = expand_env_recursive(raw_data)
 
-        # 如果提供了 run_id，覆盖配置中的 run_id
+        # 如果提供了 task_id/run_id，覆盖配置中的值
+        if task_id is not None:
+            if "run" in raw_data:
+                raw_data["run"]["task_id"] = task_id
+            else:
+                raw_data["run"] = {"task_id": task_id}
+
         if run_id is not None:
             if "run" in raw_data:
                 raw_data["run"]["run_id"] = run_id
@@ -169,9 +190,12 @@ class QuestionGeneratorConfig(BaseModel):
             yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
 
     def get_resolved_output_path(self) -> Path:
-        """获取解析后的输出路径（替换 ${run_id}）。"""
-        return Path(self.run.output_path.replace("${run_id}", self.run.run_id))
+        """获取解析后的输出路径（替换 ${task_id} 和 ${run_id}）。"""
+        path = self.run.output_path.replace("${task_id}", self.run.task_id)
+        path = path.replace("${run_id}", self.run.run_id)
+        return Path(path)
 
     def get_resolved_log_path(self) -> Path:
         """获取解析后的日志路径（替换 ${run_id}）。"""
-        return Path(self.logging.log_file.replace("${run_id}", self.run.run_id))
+        path = self.logging.log_file.replace("${run_id}", self.run.run_id)
+        return Path(path)

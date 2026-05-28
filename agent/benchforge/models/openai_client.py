@@ -15,9 +15,18 @@ class OpenAIClient(BaseModelClient):
         self,
         api_key: str,
         base_url: str = "https://api.openai.com/v1",
+        model_name: str = "gpt-4o-mini",
         max_retries: int = 3,
     ):
-        """初始化客户端。"""
+        """初始化客户端。
+
+        Args:
+            api_key: API 密钥
+            base_url: API 基础 URL
+            model_name: 默认模型名称
+            max_retries: 最大重试次数
+        """
+        self.model_name = model_name
         self.client = openai.AsyncOpenAI(
             api_key=api_key,
             base_url=base_url,

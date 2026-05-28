@@ -21,7 +21,6 @@ from benchforge.schemas import (
     TopicState,
     TopicStatus,
     EvidencePool,
-    AgentDecision,
     ControlDecision,
     Observation,
 )

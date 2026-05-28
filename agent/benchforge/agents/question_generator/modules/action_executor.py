@@ -90,6 +90,8 @@ class ActionExecutor:
                 result = await self._execute_continue_generation(context, params)
             elif action == "defer_topic":
                 result = self._execute_defer_topic(context, params)
+            elif action == "defer_gap":
+                result = self._execute_defer_gap(context, params)
             else:
                 result = ActionResult(
                     success=False,
@@ -268,6 +270,29 @@ class ActionExecutor:
         state.status = TopicStatus.DEFERRED
 
         return ActionResult(success=True, output={"topic": topic, "status": "deferred"})
+
+    def _execute_defer_gap(
+        self,
+        context: dict[str, Any],
+        params: dict[str, Any],
+    ) -> ActionResult:
+        """执行 defer_gap：跳过当前缺口，标记为无法完成。"""
+        topic = params.get("topic", "")
+        gap_key = params.get("gap_key", "")
+        planner = context.get("planner")
+
+        if not planner:
+            return ActionResult(success=False, error="planner not found in context")
+
+        state = planner.topic_states.get(topic)
+        if not state:
+            return ActionResult(success=False, error=f"topic state not found: {topic}")
+
+        # 将缺口的剩余计数置为 0，表示放弃该缺口
+        if gap_key and gap_key in state.remaining_counts:
+            state.remaining_counts[gap_key] = 0
+
+        return ActionResult(success=True, output={"topic": topic, "gap_key": gap_key, "status": "gap_deferred"})
 
     def _get_prefer_multi_chunk(self, topic: str, planner: Any) -> bool:
         """获取主题是否偏好多 chunk。"""
