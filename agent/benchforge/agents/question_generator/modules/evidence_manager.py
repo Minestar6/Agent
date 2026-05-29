@@ -54,8 +54,10 @@ class EvidenceManager:
         self.model_client = model_client
         self.multi_chunk_builder = MultiChunkBuilder()
         self.document_summaries: dict[str, str] = {}
+        self.documents: dict[str, Any] = {}  # document_id -> SourceDocument
         self.used_chunk_combinations: set[frozenset[str]] = set()
-        self.retrieved_urls: set[str] = set()  # 已抓取的 URL，用于去重
+        self.retrieved_urls: set[str] = set()
+        self.evidence_pools: dict[str, Any] = {}
 
     async def prepare_evidence(
         self,
@@ -112,6 +114,8 @@ class EvidenceManager:
 
             if document.status.value == "failed":
                 continue
+
+            self.documents[document.document_id] = document
 
             # Stage 1: 生成文档摘要（使用大 chunk 参数，降低成本）
             summary = await self._generate_document_summary(document)

@@ -1,0 +1,242 @@
+{
+  "Climate Change": [
+    {
+      "unit_id": "multi_6c8a4f4bc69d",
+      "chunk_ids": [
+        "doc_8955732ebf58::chunk_0000",
+        "doc_8955732ebf58::chunk_0001"
+      ],
+      "qa_score": 0.13302607913669065,
+      "mcq_score": 0.10749400479616308,
+      "hard_score": 0.16889988009592324
+    },
+    {
+      "unit_id": "multi_f6840266ae42",
+      "chunk_ids": [
+        "doc_24ef1a588aa8::chunk_0000",
+        "doc_24ef1a588aa8::chunk_0001"
+      ],
+      "qa_score": 0.09813111403124544,
+      "mcq_score": 0.11777631771061473,
+      "hard_score": 0.1519491896627245
+    },
+    {
+      "unit_id": "multi_0f6b04d53e91",
+      "chunk_ids": [
+        "doc_1bfd25a3d3ae::chunk_0000",
+        "doc_1bfd25a3d3ae::chunk_0001"
+      ],
+      "qa_score": 0.09917647058823528,
+      "mcq_score": 0.05815686274509804,
+      "hard_score": 0.11516862745098039
+    },
+    {
+      "unit_id": "multi_8778fe86e353",
+      "chunk_ids": [
+        "doc_ddd849987d4f::chunk_0000",
+        "doc_ddd849987d4f::chunk_0001"
+      ],
+      "qa_score": 0.10446265938069216,
+      "mcq_score": 0.08006865629816451,
+      "hard_score": 0.12607538181308675
+    },
+    {
+      "unit_id": "multi_8531e8b083a7",
+      "chunk_ids": [
+        "doc_507ec3876d90::chunk_0000",
+        "doc_507ec3876d90::chunk_0001"
+      ],
+      "qa_score": 0.08735224586288418,
+      "mcq_score": 0.060401891252955114,
+      "hard_score": 0.09418439716312058
+    }
+  ],
+  "Space Exploration": [
+    {
+      "unit_id": "multi_d883d9ab1bf0",
+      "chunk_ids": [
+        "doc_f466c2752f96::chunk_0000",
+        "doc_f466c2752f96::chunk_0001"
+      ],
+      "qa_score": 0.17591963780418787,
+      "mcq_score": 0.20970571590265988,
+      "hard_score": 0.19318619128466327
+    },
+    {
+      "unit_id": "multi_6f09d8ac3fb2",
+      "chunk_ids": [
+        "doc_b381cebb9715::chunk_0000",
+        "doc_b381cebb9715::chunk_0001"
+      ],
+      "qa_score": 0.17881584871679415,
+      "mcq_score": 0.13350592826054333,
+      "hard_score": 0.16938316073840612
+    },
+    {
+      "unit_id": "multi_ebaca0d3269b",
+      "chunk_ids": [
+        "doc_701bb961227c::chunk_0000",
+        "doc_701bb961227c::chunk_0001"
+      ],
+      "qa_score": 0.10838117106773823,
+      "mcq_score": 0.20945911468299536,
+      "hard_score": 0.14417910447761198
+    }
+  ],
+  "Machine Learning": [
+    {
+      "unit_id": "multi_1249234f9208",
+      "chunk_ids": [
+        "doc_18ac17e18c48::chunk_0000",
+        "doc_18ac17e18c48::chunk_0001"
+      ],
+      "qa_score": 0.17432389182269162,
+      "mcq_score": 0.050512081933109326,
+      "hard_score": 0.16396223395743323
+    },
+    {
+      "unit_id": "multi_9867ab5ac390",
+      "chunk_ids": [
+        "doc_a42014b996c0::chunk_0000",
+        "doc_a42014b996c0::chunk_0001"
+      ],
+      "qa_score": 0.1169101847872798,
+      "mcq_score": 0.1658573270305114,
+      "hard_score": 0.14092536885832976
+    },
+    {
+      "unit_id": "multi_7e76c1110ad6",
+      "chunk_ids": [
+        "doc_ce155af0fb1c::chunk_0000",
+        "doc_ce155af0fb1c::chunk_0001"
+      ],
+      "qa_score": 0.10307524719289426,
+      "mcq_score": 0.01859393329981568,
+      "hard_score": 0.09475448298977712
+    },
+    {
+      "unit_id": "multi_7c29501a9c5a",
+      "chunk_ids": [
+        "doc_4825befa3f48::chunk_0000",
+        "doc_4825befa3f48::chunk_0001"
+      ],
+      "qa_score": 0.10361674081397262,
+      "mcq_score": 0.0,
+      "hard_score": 0.08904267589388695
+    },
+    {
+      "unit_id": "multi_5fa74d9622f1",
+      "chunk_ids": [
+        "doc_87513bde3fb6::chunk_0000",
+        "doc_87513bde3fb6::chunk_0001"
+      ],
+      "qa_score": 0.09778672032193159,
+      "mcq_score": 0.0,
+      "hard_score": 0.0708115358819584
+    }
+  ],
+  "Quantum Mechanics": [
+    {
+      "unit_id": "multi_32dd3082c93d",
+      "chunk_ids": [
+        "doc_43ffaee89051::chunk_0000",
+        "doc_43ffaee89051::chunk_0001"
+      ],
+      "qa_score": 0.12204795761884846,
+      "mcq_score": 0.0,
+      "hard_score": 0.09530182629304332
+    },
+    {
+      "unit_id": "multi_daae274959eb",
+      "chunk_ids": [
+        "doc_544564722ea8::chunk_0000",
+        "doc_544564722ea8::chunk_0001"
+      ],
+      "qa_score": 0.11875471129202472,
+      "mcq_score": 0.05292477008894919,
+      "hard_score": 0.10823156942559928
+    },
+    {
+      "unit_id": "multi_d7500ea365bc",
+      "chunk_ids": [
+        "doc_2dca438d197a::chunk_0000",
+        "doc_2dca438d197a::chunk_0001"
+      ],
+      "qa_score": 0.12223641628342702,
+      "mcq_score": 0.0,
+      "hard_score": 0.11326860841423947
+    },
+    {
+      "unit_id": "multi_d7cb3c905ade",
+      "chunk_ids": [
+        "doc_31b8d8940bf1::chunk_0000",
+        "doc_31b8d8940bf1::chunk_0001"
+      ],
+      "qa_score": 0.0991176910423209,
+      "mcq_score": 0.05323014804845225,
+      "hard_score": 0.09862419620158516
+    },
+    {
+      "unit_id": "multi_0e8c28d7da3d",
+      "chunk_ids": [
+        "doc_b8a69aecda6f::chunk_0000",
+        "doc_b8a69aecda6f::chunk_0001"
+      ],
+      "qa_score": 0.07776010904134481,
+      "mcq_score": 0.025829168559745597,
+      "hard_score": 0.08023625624716038
+    }
+  ],
+  "History of Medicine": [
+    {
+      "unit_id": "multi_049339a044c3",
+      "chunk_ids": [
+        "doc_99a43afbd38d::chunk_0000",
+        "doc_99a43afbd38d::chunk_0001"
+      ],
+      "qa_score": 0.12821387940841864,
+      "mcq_score": 0.21080141575022118,
+      "hard_score": 0.14882821387940845
+    },
+    {
+      "unit_id": "multi_c133ec6e42ac",
+      "chunk_ids": [
+        "doc_6a55a8cb60bb::chunk_0000",
+        "doc_6a55a8cb60bb::chunk_0001"
+      ],
+      "qa_score": 0.122626079054975,
+      "mcq_score": 0.02582916855974557,
+      "hard_score": 0.10960169619869756
+    },
+    {
+      "unit_id": "multi_768dd8691622",
+      "chunk_ids": [
+        "doc_01719a2a2c83::chunk_0000",
+        "doc_01719a2a2c83::chunk_0001"
+      ],
+      "qa_score": 0.14738604922091159,
+      "mcq_score": 0.033296927333624604,
+      "hard_score": 0.10719382554244938
+    },
+    {
+      "unit_id": "multi_7c838f024189",
+      "chunk_ids": [
+        "doc_392f74d90ac8::chunk_0000",
+        "doc_392f74d90ac8::chunk_0001"
+      ],
+      "qa_score": 0.10795434278580343,
+      "mcq_score": 0.0,
+      "hard_score": 0.09283039058319958
+    },
+    {
+      "unit_id": "multi_dbdf65a921bb",
+      "chunk_ids": [
+        "doc_db81d335d2d1::chunk_0000",
+        "doc_db81d335d2d1::chunk_0001"
+      ],
+      "qa_score": 0.0512834516657564,
+      "mcq_score": 0.0,
+      "hard_score": 0.03187693427999272
+    }
+  ]
+}

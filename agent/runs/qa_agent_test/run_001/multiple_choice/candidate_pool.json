@@ -1,0 +1,222 @@
+[
+  {
+    "question": "How does the organized phenomenon of climate change denial most directly influence the range of future global temperature projections presented by the IPCC?",
+    "choices": [
+      "(A) By funding alternative climate research that produces lower temperature estimates, thereby changing the scientific consensus.",
+      "(B) By creating public doubt and political inertia, which hinders the implementation of policies needed to achieve low-emissions scenarios.",
+      "(C) By directly increasing atmospheric CO2 concentrations through lobbying efforts, pushing the world toward higher-emissions pathways.",
+      "(D) By successfully arguing that water vapor is the primary greenhouse gas, which, if accepted, would make the IPCC's CO2-focused models obsolete."
+    ],
+    "answer": "B",
+    "question_mode": "multiple_choice",
+    "thought_process": "This question tests synthesis and applied analysis. It requires connecting two major themes in the text: 1) the detailed description of climate change denial as an organized effort to sow public doubt and influence politics, and 2) the IPCC's future warming projections which are contingent on human emissions pathways. The correct answer (B) identifies the causal chain: denial -> eroded public/political will -> delayed or weakened climate policy -> continued high emissions -> higher temperature scenarios. The distractors represent plausible but incorrect understandings: (A) misrepresents denial's target (public/political arena, not core science), (C) confuses a social/political activity with a direct physical emission, and (D) focuses on a specific debunked scientific argument mentioned in the text but overstates its impact on established models.",
+    "question_type": "analytical",
+    "required_capability": "Analyzing the interaction between sociopolitical factors (science denial campaigns) and geophysical forecasting models, and synthesizing how one influences the probable outcomes of the other.",
+    "estimated_difficulty": 7,
+    "citations": [
+      "Climate change denial includes raising unreasonable doubts about the extent to which climate change is caused by humans, its effects on nature and human society, and understating the costs of climate change adaptation while overstating the costs of mitigating it.",
+      "Industrial, political and ideological interests organize activity to undermine public trust in climate science.",
+      "Climate change denial is undermining efforts to act on or adapt to climate change, and exerts a powerful influence on the politics of climate change.",
+      "The IPCC Sixth Assessment Report (2021) included projections that by 2100 global warming is very likely to reach 1.0–1.8 °C under a scenario with very low emissions of greenhouse gases, 2.1–3.5 °C under an intermediate emissions scenario, or 3.3–5.7 °C under a very high emissions scenario."
+    ]
+  },
+  {
+    "question": "A historian argues that the shift in space exploration focus in the 1970s, exemplified by programs like the Space Shuttle and the planning of the International Space Station, was primarily driven by a change in underlying motivation. Which rationale for space exploration best explains this historical shift?",
+    "choices": [
+      "(A) A renewed focus on developing military and strategic advantages against rival nations",
+      "(B) The pursuit of national prestige through increasingly complex and public missions",
+      "(C) A growing emphasis on uniting different nations through long-term collaborative projects",
+      "(D) The technological necessity of moving beyond one-off flights to more sustainable hardware"
+    ],
+    "answer": "C",
+    "question_mode": "multiple_choice",
+    "thought_process": "This question tests analytical synthesis by requiring the test-taker to connect a described historical shift (from competition to cooperation, from one-off flights to reusable systems) with the foundational rationales for exploration provided earlier in the text. The correct answer (C) directly links the cooperative nature of the ISS to the stated rationale of 'uniting different nations.' Distractor (D) is a surface-level trap—it correctly identifies a technological characteristic of the shift (renewable hardware) but mistakes a method for a core motivation. Distractors (A) and (B) represent common misconceptions, applying the competitive motivations of the earlier 'Space Race' era to the later cooperative period, which the text explicitly contrasts.",
+    "question_type": "analytical",
+    "required_capability": "Analyzing historical causal relationships in technological programs by connecting described events (the shift to the Shuttle and ISS) to stated foundational motivations (the rationales for space exploration).",
+    "estimated_difficulty": 6,
+    "citations": [
+      "Common rationales for exploring space include advancing scientific research, national prestige, uniting different nations, ensuring the future survival of humanity, and developing military and strategic advantages against other countries.",
+      "In the 1970s, focus shifted from one-off flights to renewable hardware, such as the Space Shuttle program, and from competition to cooperation, the foremost example being the International Space Station (ISS), built between 1998 and 2011."
+    ]
+  },
+  {
+    "question": "A researcher is developing a system to analyze a long legal document and identify all references to a specific precedent case, even if they use different phrasing or appear hundreds of pages apart. Which neural network architecture, highlighted for its ability to handle a specific type of dependency, would be most fundamentally suited as the core model for this task?",
+    "choices": [
+      "(A) Convolutional Neural Network (CNN)",
+      "(B) Recurrent Neural Network (RNN)",
+      "(C) Multilayer Perceptron (MLP)",
+      "(D) Transformer"
+    ],
+    "answer": "D",
+    "question_mode": "multiple_choice",
+    "thought_process": "This question tests application and synthesis. The user must recall that Transformer architectures were introduced with 'attention mechanisms that allow neural networks to model long-range dependencies in data.' The scenario explicitly describes needing to connect concepts 'hundreds of pages apart'—a textbook example of a long-range dependency. While RNNs handle sequences, they are less effective with very long-range connections compared to Transformers. CNNs are for spatial data like images, and a basic MLP lacks specialized mechanisms for sequential or long-context data. The correct answer requires connecting the architectural feature (attention) to the problem requirement (long-range dependencies).",
+    "question_type": "application-based",
+    "required_capability": "Applying knowledge of specific neural network architectures to a novel problem scenario by matching architectural strengths (e.g., handling long-range dependencies) to task requirements.",
+    "estimated_difficulty": 6,
+    "citations": [
+      "Transformer architectures introduced attention mechanisms that allow neural networks to model long-range dependencies in data and have the basis of large language models."
+    ]
+  },
+  {
+    "question": "What is the primary human activity identified as driving the modern-day rise in global temperatures?",
+    "choices": [
+      "(A) Deforestation for agricultural expansion",
+      "(B) The burning of fossil fuels since the Industrial Revolution",
+      "(C) Increased use of nuclear power",
+      "(D) Natural cycles of volcanic activity"
+    ],
+    "answer": "B",
+    "question_mode": "multiple_choice",
+    "thought_process": "This question tests basic recall of the most fundamental cause of modern climate change as stated in the text. The correct answer is directly and prominently mentioned. The distractors are other activities mentioned (deforestation) or not mentioned as primary drivers (nuclear power, volcanic activity), requiring the reader to identify the most emphasized cause.",
+    "question_type": "factual",
+    "required_capability": "recalling the stated primary cause of anthropogenic global warming",
+    "estimated_difficulty": 1,
+    "citations": [
+      "The modern-day rise in global temperatures is driven by human activities, especially fossil fuel (coal, oil and natural gas) burning since the Industrial Revolution."
+    ]
+  },
+  {
+    "question": "What was the first human-made object to successfully achieve orbit around Earth?",
+    "choices": [
+      "(A) The German V-2 rocket MW 18014",
+      "(B) The Soviet satellite Sputnik 1",
+      "(C) The American Apollo 11 mission",
+      "(D) The Russian spacecraft Vostok 1"
+    ],
+    "answer": "B",
+    "question_mode": "multiple_choice",
+    "thought_process": "This question tests basic recall of a foundational milestone in space history explicitly stated in the text. The text directly says: 'The first successful orbital launch was of the Soviet uncrewed Sputnik 1... mission on 4 October 1957.' The distractors are other significant 'firsts' (first object in space, first human landing on the Moon, first human spaceflight) also mentioned in the text, requiring the reader to distinguish between these different achievements.",
+    "question_type": "factual",
+    "required_capability": "Recalling specific historical milestones in the chronology of space exploration.",
+    "estimated_difficulty": 2,
+    "citations": [
+      "The first successful orbital launch was of the Soviet uncrewed Sputnik 1 (\"Satellite 1\") mission on 4 October 1957."
+    ]
+  },
+  {
+    "question": "What is the primary inspiration for the structure and function of artificial neural networks?",
+    "choices": [
+      "(A) The von Neumann architecture of traditional computers",
+      "(B) The structure and functions of biological neural networks",
+      "(C) Statistical methods like linear regression developed centuries ago",
+      "(D) Mathematical models of logical functions"
+    ],
+    "answer": "B",
+    "question_mode": "multiple_choice",
+    "thought_process": "This question tests the most fundamental definition provided in the text. The first sentence explicitly states neural networks are 'inspired by the structure and functions of biological neural networks.' The distractors are all related concepts mentioned in the text (computer architecture, statistical foundations, logical models) but are not the primary inspiration. Answering correctly requires simple recall of this key point.",
+    "question_type": "factual",
+    "required_capability": "Recalling the basic definition and inspiration for neural networks",
+    "estimated_difficulty": 1,
+    "citations": [
+      "In machine learning, a neural network (NN) or neural net, is a computational model inspired by the structure and functions of biological neural networks."
+    ]
+  },
+  {
+    "question": "According to the IPCC definition quoted in the text, what is climate change mitigation?",
+    "choices": [
+      "(A) A natural process that reduces atmospheric carbon over centuries",
+      "(B) A human intervention to reduce emissions or enhance the sinks of greenhouse gases",
+      "(C) The international effort to adapt societies to inevitable climate impacts",
+      "(D) The scientific study of greenhouse gas effects on global temperature"
+    ],
+    "answer": "B",
+    "question_mode": "multiple_choice",
+    "thought_process": "This question directly tests the recall of a core definition provided in the text. The correct answer is a verbatim quote. The distractors are related to climate change (adaptation, science, long-term cycles) but do not match the specific definition given for 'mitigation.'",
+    "question_type": "factual",
+    "required_capability": "recalling the formal definition of a key term from the document",
+    "estimated_difficulty": 2,
+    "citations": [
+      "The Intergovernmental Panel on Climate Change (IPCC) defines mitigation (of climate change) as \"a human intervention to reduce emissions or enhance the sinks of greenhouse gases\"."
+    ]
+  },
+  {
+    "question": "What was the primary driver of the early era of space exploration?",
+    "choices": [
+      "(A) International scientific cooperation",
+      "(B) The development of reusable rocket hardware",
+      "(C) A 'Space Race' between the Soviet Union and the United States",
+      "(D) Private sector investment and competition"
+    ],
+    "answer": "C",
+    "question_mode": "multiple_choice",
+    "thought_process": "This question tests basic recall of a central theme from the historical overview. The text explicitly states the early era was driven by the 'Space Race' between the two superpowers. The distractors are all concepts mentioned elsewhere in the text (cooperation in the 1970s, reusable hardware with the Space Shuttle, private sector rise in the 2010s), making them plausible but incorrect for the 'early era.' Answering correctly requires remembering which historical period is associated with which motivating factor.",
+    "question_type": "factual",
+    "required_capability": "recalling the stated historical catalyst for early space exploration",
+    "estimated_difficulty": 1,
+    "citations": [
+      "The early era of space exploration was driven by a \"Space Race\" in which the Soviet Union and the United States vied to demonstrate their technological superiority."
+    ]
+  },
+  {
+    "question": "In a neural network, what is the name for the non-linear function that computes the output of an artificial neuron based on the totality of its inputs?",
+    "choices": [
+      "(A) The activation function",
+      "(B) The weight function",
+      "(C) The synaptic function",
+      "(D) The gradient function"
+    ],
+    "answer": "A",
+    "question_mode": "multiple_choice",
+    "thought_process": "This question tests basic recall of a fundamental definition provided in the text. The term 'activation function' is explicitly defined, making this a straightforward surface-level comprehension check. The distractors are other related terms mentioned (weight) or plausible-sounding but incorrect neural network components.",
+    "question_type": "factual",
+    "required_capability": "recalling the definition of core neural network components",
+    "estimated_difficulty": 2,
+    "citations": [
+      "The \"signal\" is a real number, and the output of each neuron is computed by some non-linear function of the totality of its inputs, called the activation function."
+    ]
+  },
+  {
+    "question": "According to the text, what is the primary human activity responsible for the modern rise in global temperatures?",
+    "choices": [
+      "(A) Deforestation and agricultural practices",
+      "(B) The burning of fossil fuels since the Industrial Revolution",
+      "(C) Increased use of nuclear power",
+      "(D) Natural climate cycles like ice ages"
+    ],
+    "answer": "B",
+    "question_mode": "multiple_choice",
+    "thought_process": "This question tests basic recall of a central, explicitly stated cause of contemporary climate change. The text directly attributes the modern temperature increase to fossil fuel burning. The distractors are other activities mentioned (deforestation) or concepts from the text (natural cycles, alternative energy) that are not identified as the primary driver.",
+    "question_type": "factual",
+    "required_capability": "recalling a stated primary cause of anthropogenic climate change",
+    "estimated_difficulty": 1,
+    "citations": [
+      "The modern-day rise in global temperatures is driven by human activities, especially fossil fuel (coal, oil and natural gas) burning since the Industrial Revolution."
+    ]
+  },
+  {
+    "question": "According to the text, what is a primary modern motivation for investment in space exploration, in contrast to the 20th-century Space Race?",
+    "choices": [
+      "(A) Achieving national prestige through competition",
+      "(B) Protecting human life from catastrophic events and leveraging space resources",
+      "(C) Establishing permanent military bases on the Moon",
+      "(D) Winning a new race to be the first to land on Mars"
+    ],
+    "answer": "B",
+    "question_mode": "multiple_choice",
+    "thought_process": "This question tests basic recall of a direct comparison made in the text. It states that 20th-century exploration was driven by US-Soviet competition, while current investment is motivated by survival and resource leverage. The correct answer is a verbatim concept from the text, and the distractors are other plausible-sounding but incorrect motivations not cited as the primary modern driver.",
+    "question_type": "factual",
+    "required_capability": "Recalling stated historical and modern rationales for space exploration investment",
+    "estimated_difficulty": 2,
+    "citations": [
+      "Space exploration of the late 20th century was driven by competition between the Soviet Union and the United States to achieve the first spaceflight. Now, the private sector and national governments are again investing in space exploration. However, this time they are motivated by protecting human life from catastrophic events and leveraging the resources of space."
+    ]
+  },
+  {
+    "question": "Who is credited with coining the term 'machine learning'?",
+    "choices": [
+      "(A) Alan Turing",
+      "(B) Arthur Samuel",
+      "(C) Frank Rosenblatt",
+      "(D) John McCarthy"
+    ],
+    "answer": "B",
+    "question_mode": "multiple_choice",
+    "thought_process": "This question directly tests recall of a key historical fact explicitly stated in the text. It verifies that the reader has absorbed the basic timeline and attribution of foundational terminology in the field.",
+    "question_type": "factual",
+    "required_capability": "recalling a specific historical fact about the origin of machine learning terminology",
+    "estimated_difficulty": 1,
+    "citations": [
+      "The term machine learning was coined in 1959 by Arthur Samuel, an IBM employee and pioneer in the field of computer gaming and artificial intelligence."
+    ]
+  }
+]

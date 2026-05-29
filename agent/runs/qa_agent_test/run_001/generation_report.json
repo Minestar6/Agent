@@ -1,0 +1,19 @@
+{
+  "task_id": "qa_agent_test",
+  "run_id": "run_001",
+  "modes": {
+    "qa": {
+      "candidate_count": 15,
+      "target_candidate_count": 15,
+      "stopped_reason": "candidate_pool_sufficient"
+    },
+    "multiple_choice": {
+      "candidate_count": 12,
+      "target_candidate_count": 10,
+      "stopped_reason": "candidate_pool_sufficient"
+    }
+  },
+  "total_candidates": 27,
+  "global_used_chunk_combinations": 27,
+  "global_failures": 0
+}

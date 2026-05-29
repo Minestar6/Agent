@@ -1,0 +1,47 @@
+{
+  "run_id": "fake_demo_001",
+  "goal": "demo benchmark generation",
+  "topics": [
+    "Quantum Computing"
+  ],
+  "mode_targets": {
+    "qa": {
+      "count": 4,
+      "difficulty_distribution": {
+        "easy": 0.25,
+        "medium": 0.5,
+        "hard": 0.25
+      }
+    }
+  },
+  "topic_states": {
+    "Quantum Computing": {
+      "topic": "Quantum Computing",
+      "status": "deferred",
+      "current_round": 4,
+      "target_counts": {
+        "qa:easy": 1,
+        "qa:medium": 2,
+        "qa:hard": 1
+      },
+      "completed_counts": {},
+      "remaining_counts": {
+        "qa:easy": 1,
+        "qa:medium": 2,
+        "qa:hard": 1
+      },
+      "retrieved_documents": [],
+      "available_single_chunk_ids": [],
+      "available_multi_chunk_ids": []
+    }
+  },
+  "global_stats": {},
+  "final_counts": {},
+  "remaining_gaps": {
+    "qa:easy": 1,
+    "qa:medium": 2,
+    "qa:hard": 1
+  },
+  "status": "partial",
+  "created_at": "2026-05-22 09:57:34.422696"
+}

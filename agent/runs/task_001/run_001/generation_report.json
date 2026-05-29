@@ -1,0 +1,19 @@
+{
+  "task_id": "task_001",
+  "run_id": "run_001",
+  "modes": {
+    "qa": {
+      "candidate_count": 70,
+      "target_candidate_count": 50,
+      "stopped_reason": "candidate_pool_sufficient"
+    },
+    "multiple_choice": {
+      "candidate_count": 35,
+      "target_candidate_count": 25,
+      "stopped_reason": "candidate_pool_sufficient"
+    }
+  },
+  "total_candidates": 105,
+  "global_used_chunk_combinations": 19,
+  "global_failures": 0
+}

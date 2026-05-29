@@ -1,0 +1,13 @@
+{
+  "mode": "multiple_choice",
+  "candidate_count": 12,
+  "difficulty_counts": {
+    "medium": 12
+  },
+  "topic_counts": {
+    "Climate Change": 4,
+    "Space Exploration": 4,
+    "Machine Learning": 4
+  },
+  "stopped_reason": "candidate_pool_sufficient"
+}

@@ -13,5 +13,3 @@
 <text_chunk>
 {evidence_text}
 </text_chunk>
-
-Generate {requested_target_questions} questions.

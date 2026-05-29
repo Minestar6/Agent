@@ -1,0 +1,229 @@
+{
+  "Renaissance Art": {
+    "topic": "Renaissance Art",
+    "status": "completed",
+    "current_round": 6,
+    "prefer_multi_chunk": false,
+    "target_counts": {
+      "qa:easy": 2,
+      "qa:medium": 2,
+      "qa:hard": 2,
+      "multiple_choice:easy": 1,
+      "multiple_choice:medium": 2,
+      "multiple_choice:hard": 1
+    },
+    "completed_counts": {
+      "qa:hard": 3,
+      "multiple_choice:hard": 2,
+      "multiple_choice:medium": 4,
+      "qa:medium": 2,
+      "qa:easy": 4,
+      "multiple_choice:easy": 3
+    },
+    "remaining_counts": {
+      "qa:easy": 0,
+      "qa:medium": 0,
+      "qa:hard": 0,
+      "multiple_choice:easy": 0,
+      "multiple_choice:medium": 0,
+      "multiple_choice:hard": 0
+    },
+    "retrieved_documents": [],
+    "available_single_chunk_ids": [],
+    "available_multi_chunk_ids": []
+  },
+  "Industrial Revolution": {
+    "topic": "Industrial Revolution",
+    "status": "completed",
+    "current_round": 6,
+    "prefer_multi_chunk": false,
+    "target_counts": {
+      "qa:easy": 1,
+      "qa:medium": 2,
+      "qa:hard": 2,
+      "multiple_choice:easy": 1,
+      "multiple_choice:medium": 2,
+      "multiple_choice:hard": 1
+    },
+    "completed_counts": {
+      "qa:hard": 2,
+      "qa:medium": 2,
+      "multiple_choice:hard": 2,
+      "multiple_choice:medium": 3,
+      "qa:easy": 3,
+      "multiple_choice:easy": 3
+    },
+    "remaining_counts": {
+      "qa:easy": 0,
+      "qa:medium": 0,
+      "qa:hard": 0,
+      "multiple_choice:easy": 0,
+      "multiple_choice:medium": 0,
+      "multiple_choice:hard": 0
+    },
+    "retrieved_documents": [],
+    "available_single_chunk_ids": [],
+    "available_multi_chunk_ids": []
+  },
+  "Quantum Mechanics": {
+    "topic": "Quantum Mechanics",
+    "status": "completed",
+    "current_round": 6,
+    "prefer_multi_chunk": false,
+    "target_counts": {
+      "qa:easy": 1,
+      "qa:medium": 2,
+      "qa:hard": 1,
+      "multiple_choice:easy": 1,
+      "multiple_choice:medium": 2,
+      "multiple_choice:hard": 1
+    },
+    "completed_counts": {
+      "qa:hard": 1,
+      "multiple_choice:hard": 1,
+      "multiple_choice:medium": 4,
+      "qa:medium": 3,
+      "qa:easy": 3,
+      "multiple_choice:easy": 3
+    },
+    "remaining_counts": {
+      "qa:easy": 0,
+      "qa:medium": 0,
+      "qa:hard": 0,
+      "multiple_choice:easy": 0,
+      "multiple_choice:medium": 0,
+      "multiple_choice:hard": 0
+    },
+    "retrieved_documents": [],
+    "available_single_chunk_ids": [],
+    "available_multi_chunk_ids": []
+  },
+  "Machine Learning": {
+    "topic": "Machine Learning",
+    "status": "completed",
+    "current_round": 6,
+    "prefer_multi_chunk": false,
+    "target_counts": {
+      "qa:easy": 1,
+      "qa:medium": 2,
+      "qa:hard": 1,
+      "multiple_choice:easy": 1,
+      "multiple_choice:medium": 1,
+      "multiple_choice:hard": 1
+    },
+    "completed_counts": {
+      "qa:hard": 2,
+      "multiple_choice:hard": 2,
+      "qa:medium": 3,
+      "multiple_choice:medium": 3,
+      "qa:easy": 3,
+      "multiple_choice:easy": 3
+    },
+    "remaining_counts": {
+      "qa:easy": 0,
+      "qa:medium": 0,
+      "qa:hard": 0,
+      "multiple_choice:easy": 0,
+      "multiple_choice:medium": 0,
+      "multiple_choice:hard": 0
+    },
+    "retrieved_documents": [],
+    "available_single_chunk_ids": [],
+    "available_multi_chunk_ids": []
+  },
+  "Climate Science": {
+    "topic": "Climate Science",
+    "status": "completed",
+    "current_round": 6,
+    "prefer_multi_chunk": false,
+    "target_counts": {
+      "qa:easy": 1,
+      "qa:medium": 2,
+      "qa:hard": 1,
+      "multiple_choice:easy": 1,
+      "multiple_choice:medium": 1,
+      "multiple_choice:hard": 0
+    },
+    "completed_counts": {
+      "qa:hard": 2,
+      "qa:medium": 3,
+      "multiple_choice:medium": 3,
+      "qa:easy": 3,
+      "multiple_choice:easy": 3
+    },
+    "remaining_counts": {
+      "qa:easy": 0,
+      "qa:medium": 0,
+      "qa:hard": 0,
+      "multiple_choice:easy": 0,
+      "multiple_choice:medium": 0,
+      "multiple_choice:hard": 0
+    },
+    "retrieved_documents": [],
+    "available_single_chunk_ids": [],
+    "available_multi_chunk_ids": []
+  },
+  "Blockchain Technology": {
+    "topic": "Blockchain Technology",
+    "status": "completed",
+    "current_round": 5,
+    "prefer_multi_chunk": false,
+    "target_counts": {
+      "qa:easy": 1,
+      "qa:medium": 2,
+      "qa:hard": 1,
+      "multiple_choice:easy": 1,
+      "multiple_choice:medium": 1,
+      "multiple_choice:hard": 0
+    },
+    "completed_counts": {
+      "qa:hard": 2,
+      "qa:medium": 3,
+      "multiple_choice:medium": 3,
+      "qa:easy": 3,
+      "multiple_choice:easy": 3
+    },
+    "remaining_counts": {
+      "qa:easy": 0,
+      "qa:medium": 0,
+      "qa:hard": 0,
+      "multiple_choice:easy": 0,
+      "multiple_choice:medium": 0,
+      "multiple_choice:hard": 0
+    },
+    "retrieved_documents": [],
+    "available_single_chunk_ids": [],
+    "available_multi_chunk_ids": []
+  },
+  "Space Exploration": {
+    "topic": "Space Exploration",
+    "status": "completed",
+    "current_round": 4,
+    "prefer_multi_chunk": false,
+    "target_counts": {
+      "qa:easy": 1,
+      "qa:medium": 1,
+      "qa:hard": 1,
+      "multiple_choice:easy": 0,
+      "multiple_choice:medium": 1,
+      "multiple_choice:hard": 0
+    },
+    "completed_counts": {
+      "qa:hard": 1,
+      "qa:medium": 3,
+      "multiple_choice:medium": 3,
+      "qa:easy": 3
+    },
+    "remaining_counts": {
+      "qa:easy": 0,
+      "qa:medium": 0,
+      "qa:hard": 0,
+      "multiple_choice:easy": 0,
+      "multiple_choice:medium": 0,
+      "multiple_choice:hard": 0
+    },
+    "retrieved_documents": [],
+    "available_single_chunk_ids": [],
+    "available_multi_chunk_ids": []
+  }
+}

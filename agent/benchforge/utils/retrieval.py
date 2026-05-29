@@ -77,7 +77,7 @@ def fetch_wikipedia_page(
     result: WikipediaSearchResult,
     run_id: str,
     language: str = "en",
-    content_max_length: int = 10000,
+    content_max_length: int | None = None,
 ) -> SourceDocument:
     """抓取 Wikipedia 页面。
 
@@ -85,7 +85,7 @@ def fetch_wikipedia_page(
         result: 搜索结果
         run_id: 运行 ID
         language: 语言
-        content_max_length: 内容最大长度
+        content_max_length: 内容最大长度（None 表示不截断）
 
     Returns:
         源文档
@@ -128,7 +128,8 @@ def fetch_wikipedia_page(
 
         # 清理
         content = re.sub(r"\[\d+\]", "", content)
-        content = content[:content_max_length]
+        if content_max_length is not None:
+            content = content[:content_max_length]
 
         return SourceDocument(
             document_id=document_id,

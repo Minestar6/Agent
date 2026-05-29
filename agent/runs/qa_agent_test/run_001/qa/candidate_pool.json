@@ -1,0 +1,190 @@
+[
+  {
+    "question": "The Paris Agreement aims to limit global warming to 1.5°C, yet analyses show that even if all current national pledges are fully met, warming would still reach about 1.8-1.9°C by 2100. What does this discrepancy reveal about the relationship between the agreement's structure and the actual commitments made by its parties?",
+    "answer": "The discrepancy reveals a fundamental gap between the agreement's collective, science-based goals and the individual, politically-negotiated commitments (NDCs) of its parties. The Paris Agreement operates on a 'bottom-up' pledge-and-review system where countries set their own non-binding targets. While the treaty's long-term temperature goals (well below 2°C, pursuing 1.5°C) are informed by climate science, the sum of all national pledges is not automatically aligned with achieving those goals. The Climate Action Tracker analysis shows that the aggregate of all current pledges is insufficient, leading to the projected 1.8-1.9°C outcome. This highlights that the agreement's mechanism for increasing ambition over time—where countries should submit progressively stronger NDCs—has not yet been successful in bridging the gap between political feasibility and scientific necessity.",
+    "question_mode": "qa",
+    "thought_process": "This question tests a synthesized understanding of the text by connecting two key pieces of information: the Paris Agreement's ambitious temperature targets and the sobering real-world projections from the Climate Action Tracker. It requires the test-taker to move beyond listing facts and analyze the causal relationship. A correct answer must reference the bottom-up nature of the agreement, the voluntary NDCs, and the concept of an 'ambition gap,' demonstrating an understanding of how the treaty's design leads to the observed shortfall in outcomes.",
+    "question_type": "analytical",
+    "required_capability": "Analyzing the structural mechanisms of an international treaty and evaluating their effectiveness against stated scientific goals.",
+    "estimated_difficulty": 7,
+    "citations": [
+      "The Paris Agreement has a long-term temperature goal which is to keep the rise in global surface temperature to well below 2°C above pre-industrial levels. The treaty also states that preferably the limit of the increase should only be 1.5°C.",
+      "Full achievement of all announced targets would mean the rise in global temperature will peak at 1.9°C and go down to 1.8°C by the year 2100.",
+      "Under the agreement, each country must determine, plan, and regularly report on its contributions. No mechanism forces a country to set specific emissions targets, but each target should go beyond previous targets."
+    ]
+  },
+  {
+    "question": "How have the primary motivations for space exploration evolved from the mid-20th century to current and planned future missions, and what does this shift indicate about humanity's changing goals?",
+    "answer": "The primary motivations have evolved from a focus on geopolitical competition and national prestige to a broader set of goals centered on long-term survival, resource utilization, and scientific discovery. The early era, defined by the US-Soviet Space Race, was driven by demonstrating technological superiority, as seen in milestones like Sputnik 1 and the Apollo Moon landing. In contrast, current and future exploration, led by both national agencies and private companies, is motivated by protecting human civilization from planetary disasters, leveraging space resources (like asteroid mining), and conducting unique scientific research (such as searching for past life on Mars with Rosalind Franklin or studying ocean worlds like Enceladus). This shift indicates a transition from short-term, competitive goals to long-term, collaborative objectives aimed at ensuring species survival, economic expansion, and deepening our fundamental understanding of the universe.",
+    "question_mode": "qa",
+    "thought_process": "This question effectively tests understanding by requiring the test-taker to synthesize information from across the text. They must identify and contrast the historical drivers (Space Race, prestige) explicitly stated in the early sections with the modern rationales (survival, resources, science) detailed in the future-focused sections. It moves beyond listing facts to analyzing a thematic evolution, connecting the 'why' of the past with the 'why' of the present and future, which demonstrates a deeper, analytical grasp of the document's narrative.",
+    "question_type": "analytical",
+    "required_capability": "Analyzing historical trends and synthesizing information to compare and contrast evolving motivations across different eras of a technological endeavor.",
+    "estimated_difficulty": 6,
+    "citations": [
+      "The early era of space exploration was driven by a \"Space Race\" in which the Soviet Union and the United States vied to demonstrate their technological superiority.",
+      "Now, the private sector and national governments are again investing in space exploration. However, this time they are motivated by protecting human life from catastrophic events and leveraging the resources of space.",
+      "The availability of additional resources that can be mined from space could potentially expand the capabilities of humans and largely benefit society.",
+      "Once safely landed, the solar powered rover will begin a seven-month (218-sol) mission to search for the existence of past life on Mars."
+    ]
+  },
+  {
+    "question": "A researcher argues that the historical development of deep learning, from the perceptron to modern Transformers, can be seen as a series of solutions to fundamental limitations in neural network design. Based on the evolution described, what were two key limitations of earlier architectures, and how did subsequent innovations specifically address them?",
+    "answer": "Two key limitations and their subsequent solutions are: 1) **The inability to learn effective feature representations automatically.** Early machine learning, including simple perceptrons, relied on hand-crafted feature engineering. Deep learning architectures, through increased depth (CAP > 2), addressed this by enabling the model to automatically discover and learn progressively more abstract and useful feature representations from raw data, as seen in the hierarchical processing example for image recognition. 2) **Difficulty in handling long-range dependencies and nuanced contextual relationships in sequential data.** Recurrent Neural Networks (RNNs) had a weakness where they favored more recent information in a sequence, attenuating the significance of earlier elements. The attention mechanism, particularly self-attention in the Transformer architecture, addressed this by allowing any element in a sequence to directly attend to any other, enabling the model to capture global dependencies and more nuanced alignments, such as the non-diagonal attention seen in translation tasks.",
+    "question_mode": "qa",
+    "thought_process": "This question tests synthesis and deep understanding by requiring the reader to connect disparate sections: the historical timeline of inventions, the theoretical rationale for depth (automatic feature learning), and the specific problem that attention solved (RNN limitations). It moves beyond naming inventors or dates to analyzing the causal 'why' behind the progression. Answering correctly demonstrates an understanding of the field's conceptual evolution, not just its chronology.",
+    "question_type": "analytical",
+    "required_capability": "Synthesizing historical developments in AI with theoretical concepts and architectural innovations to identify causal relationships in technological progress.",
+    "estimated_difficulty": 7,
+    "citations": [
+      "Prior to deep learning, machine learning techniques often involved hand-crafted feature engineering to transform the data into a more suitable representation for a classification algorithm to operate on. In the deep learning approach, features are not hand-crafted and the model discovers useful feature representations from the data automatically.",
+      "Recurrent neural networks favor information contained in words at the end of a sentence and thus deemed more recent, thereby tending to attenuate the significance and associated predictive weight assigned to information earlier in the sentence. Attention allows a token equal access to any part of a sentence directly, rather than only through the previous state.",
+      "The off-diagonal dominance shows that the attention mechanism is more nuanced."
+    ]
+  },
+  {
+    "question": "What are the two specific long-term temperature goals set by the Paris Agreement?",
+    "answer": "The Paris Agreement aims to keep the rise in global surface temperature to well below 2°C above pre-industrial levels, and to pursue efforts to limit the increase to 1.5°C.",
+    "question_mode": "qa",
+    "thought_process": "This question tests basic recall of the most fundamental and frequently cited targets of the Paris Agreement, which are explicitly stated in the text. Understanding these numerical goals is essential for grasping the treaty's objective.",
+    "question_type": "factual",
+    "required_capability": "recalling specific numerical targets from an international treaty",
+    "estimated_difficulty": 1,
+    "citations": [
+      "The Paris Agreement has a long-term temperature goal which is to keep the rise in global surface temperature to well below 2°C (3.6°F) above pre-industrial levels. The treaty also states that preferably the limit of the increase should only be 1.5°C (2.7°F)."
+    ]
+  },
+  {
+    "question": "What was the name and date of the first successful orbital launch, and which country was responsible for it?",
+    "answer": "The first successful orbital launch was the Soviet uncrewed Sputnik 1 mission on 4 October 1957.",
+    "question_mode": "qa",
+    "thought_process": "This question directly tests recall of one of the most fundamental milestones in space history, clearly stated in the text. It requires remembering a specific mission name, date, and national affiliation, which are core factual pieces of information for understanding the start of the space age.",
+    "question_type": "factual",
+    "required_capability": "recalling key historical dates and mission names in space exploration",
+    "estimated_difficulty": 2,
+    "citations": [
+      "The first successful orbital launch was of the Soviet uncrewed Sputnik 1 (\"Satellite 1\") mission on 4 October 1957."
+    ]
+  },
+  {
+    "question": "What does the adjective 'deep' in 'deep learning' refer to, and what is the minimum number of hidden layers a network typically needs to be considered 'deep'?",
+    "answer": "The adjective 'deep' refers to the use of multiple layers in the network. A network is typically called a deep neural network if it has at least two hidden layers.",
+    "question_mode": "qa",
+    "thought_process": "This question tests the reader's grasp of the core definition of 'deep learning' as presented in the text. It requires them to recall two specific, directly stated facts: the meaning of 'deep' (multiple layers) and the common threshold for what constitutes a 'deep' network (at least two hidden layers). It's a fundamental concept check.",
+    "question_type": "factual",
+    "required_capability": "recalling the basic definition and structural criteria for deep neural networks",
+    "estimated_difficulty": 1,
+    "citations": [
+      "The adjective \"deep\" refers to the use of multiple layers (ranging from three to several hundred or thousands) in the network.",
+      "A network is typically called a deep neural network if it has at least two hidden layers."
+    ]
+  },
+  {
+    "question": "According to the text, what is the primary driver of increasing global temperatures?",
+    "answer": "Carbon dioxide (CO2) is the primary driver of increasing temperatures.",
+    "question_mode": "qa",
+    "thought_process": "This question tests basic comprehension of a key scientific point made in the text refuting a common denial argument. The answer is directly stated and contrasts the roles of CO2 and water vapor, requiring the reader to recall the main causal factor identified in the document.",
+    "question_type": "factual",
+    "required_capability": "recalling a specific fact about climate science from the text",
+    "estimated_difficulty": 2,
+    "citations": [
+      "CO2 is the primary driver of increasing temperatures; water vapor acts as a feedback, not a forcing, mechanism."
+    ]
+  },
+  {
+    "question": "Who founded SpaceX and in what year?",
+    "answer": "SpaceX was founded by Elon Musk in 2002.",
+    "question_mode": "qa",
+    "thought_process": "This question effectively tests the most fundamental understanding of the document's content about SpaceX. Knowing the founder and founding year is essential baseline knowledge for anyone discussing the company's history. The answer is stated directly and unambiguously in the text.",
+    "question_type": "factual",
+    "required_capability": "recalling basic historical facts about a company's origin",
+    "estimated_difficulty": 1,
+    "citations": [
+      "SpaceX was founded by Elon Musk in 2002 with a vision of decreasing the costs of space launches, paving the way to a self-sustaining colony on Mars."
+    ]
+  },
+  {
+    "question": "What is the primary goal of quantum machine learning algorithms that use amplitude encoding?",
+    "answer": "The primary goal is to formulate quantum algorithms whose resources grow polynomially in the number of qubits, which amounts to a logarithmic time complexity in the number of amplitudes and thereby the dimension of the input.",
+    "question_mode": "qa",
+    "thought_process": "This question tests basic comprehension of a specific QML approach mentioned in the text. It requires the reader to recall the stated objective of algorithms based on amplitude encoding, which is a direct factual statement.",
+    "question_type": "factual",
+    "required_capability": "recalling the stated purpose of a specific quantum machine learning technique",
+    "estimated_difficulty": 2,
+    "citations": [
+      "The goal of algorithms based on amplitude encoding is to formulate quantum algorithms whose resources grow polynomially in the number of qubits n, which amounts to a logarithmic time complexity in the number of amplitudes and thereby the dimension of the input."
+    ]
+  },
+  {
+    "question": "According to the text, what is one specific action listed under climate change mitigation?",
+    "answer": "Conserving energy is one specific action listed under climate change mitigation.",
+    "question_mode": "qa",
+    "thought_process": "This question tests basic recall of a straightforward fact explicitly listed in the definition of climate change mitigation actions. It requires the reader to identify one item from a provided list, which is a fundamental level of comprehension.",
+    "question_type": "factual",
+    "required_capability": "recalling a specific example from a defined list of actions",
+    "estimated_difficulty": 1,
+    "citations": [
+      "Climate change mitigation actions include conserving energy and replacing fossil fuels with clean energy sources."
+    ]
+  },
+  {
+    "question": "What was the primary vision behind Elon Musk founding SpaceX in 2002?",
+    "answer": "The primary vision was to decrease the costs of space launches in order to pave the way for a self-sustaining colony on Mars.",
+    "question_mode": "qa",
+    "thought_process": "This question tests basic recall of the foundational motivation for SpaceX's existence, which is explicitly stated in the text. Understanding this vision is key to comprehending the company's subsequent goals and developments.",
+    "question_type": "factual",
+    "required_capability": "recalling the stated founding purpose of a company",
+    "estimated_difficulty": 1,
+    "citations": [
+      "SpaceX was founded by Elon Musk in 2002 with a vision of decreasing the costs of space launches, paving the way to a self-sustaining colony on Mars."
+    ]
+  },
+  {
+    "question": "What is the core definition of machine learning as a field of study?",
+    "answer": "Machine learning (ML) is a field of study in artificial intelligence concerned with the development and study of statistical algorithms that can learn from data and generalize to unseen data, and thus perform tasks without being explicitly programmed.",
+    "question_mode": "qa",
+    "thought_process": "This question tests the most basic, foundational understanding of the document's subject. A correct answer requires recalling the precise definition provided at the very beginning of the text, verifying that the reader has grasped the central concept of the entire field.",
+    "question_type": "factual",
+    "required_capability": "recalling a core definition from a technical text",
+    "estimated_difficulty": 1,
+    "citations": [
+      "Machine learning (ML) is a field of study in artificial intelligence concerned with the development and study of statistical algorithms that can learn from data and generalize to unseen data, and thus perform tasks without being explicitly programmed."
+    ]
+  },
+  {
+    "question": "What is the main human activity driving the modern increase in global average temperature?",
+    "answer": "The burning of fossil fuels (coal, oil, and natural gas) since the Industrial Revolution is the main human activity driving modern global warming.",
+    "question_mode": "qa",
+    "thought_process": "This question tests the most fundamental cause-and-effect relationship presented in the document. Understanding that human fossil fuel use is the primary driver is essential for grasping the entire concept of anthropogenic climate change. The answer is stated directly and early in the text, making it a perfect test of basic, surface-level comprehension.",
+    "question_type": "factual",
+    "required_capability": "recalling the stated primary cause of modern climate change",
+    "estimated_difficulty": 1,
+    "citations": [
+      "The modern-day rise in global temperatures is driven by human activities, especially fossil fuel (coal, oil and natural gas) burning since the Industrial Revolution."
+    ]
+  },
+  {
+    "question": "What was the key technological development in the mid-20th century that made physical space exploration possible?",
+    "answer": "The development of large and relatively efficient rockets.",
+    "question_mode": "qa",
+    "thought_process": "This question tests understanding of the foundational premise of the document. The text explicitly states that while astronomy is ancient, it was this specific technological advancement that turned observation into physical exploration. Answering correctly shows the reader has grasped the central enabling factor for the entire history that follows.",
+    "question_type": "factual",
+    "required_capability": "recalling the stated prerequisite technology for space exploration",
+    "estimated_difficulty": 1,
+    "citations": [
+      "it was the development of large and relatively efficient rockets during the mid-twentieth century that allowed physical space exploration to become a reality."
+    ]
+  },
+  {
+    "question": "What is the formal definition of machine learning provided by Tom M. Mitchell?",
+    "answer": "Tom M. Mitchell defined a computer program as learning from experience E with respect to some class of tasks T and performance measure P if its performance at tasks in T, as measured by P, improves with experience E.",
+    "question_mode": "qa",
+    "thought_process": "This question tests a fundamental understanding of the field's core operational definition, which is a key piece of information directly provided in the text. Answering it requires recalling a specific, widely-cited definition.",
+    "question_type": "factual",
+    "required_capability": "recalling a precise, formal definition from the history of machine learning",
+    "estimated_difficulty": 2,
+    "citations": [
+      "Tom M. Mitchell provided a widely quoted, more formal definition of the algorithms studied in the machine learning field: \"A computer program is said to learn from experience E with respect to some class of tasks T and performance measure P if its performance at tasks in T, as measured by P, improves with experience E.\""
+    ]
+  }
+]

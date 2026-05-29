@@ -35,7 +35,6 @@ retrieval:
   max_pages: 5                    # 每次搜索最大页面数
   max_results_per_query: 10       # 每次查询最大结果数
   summary_length: 500             # 摘要最大长度
-  content_max_length: 10000       # 内容最大长度
   request_timeout: 10             # 请求超时（秒）
   rate_limit_delay: 0.5           # 请求间隔（秒）
 

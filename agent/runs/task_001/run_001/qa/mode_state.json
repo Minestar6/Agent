@@ -1,0 +1,15 @@
+{
+  "mode": "qa",
+  "candidate_count": 70,
+  "difficulty_counts": {
+    "medium": 70
+  },
+  "topic_counts": {
+    "Climate Change": 20,
+    "Space Exploration": 13,
+    "Machine Learning": 12,
+    "Quantum Mechanics": 12,
+    "History of Medicine": 13
+  },
+  "stopped_reason": "candidate_pool_sufficient"
+}

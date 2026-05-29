@@ -430,9 +430,11 @@ def build_initial_breadth_round_plan(
     ]
     topics = tuple(uncovered[: config.initial_breadth.max_topics_per_round])
 
-    # If rotation mode has nothing, try other modes.
+    # If rotation mode has nothing, try other modes (skip the already-tried mode).
     if not topics:
         for fallback_mode in blueprint.mode_order:
+            if fallback_mode == mode:
+                continue
             uncovered = [
                 topic
                 for topic in blueprint.topics
@@ -961,14 +963,16 @@ class EvidenceManager:
         k: int,
     ) -> list: ...
 
-    def expand_retrieval(self, topic: str, queries: list[str]) -> None: ...
+    async def expand_retrieval(self, topic: str, queries: list[str]) -> None: ...
 
-    def supplement_multi_chunks(self, topic: str) -> None: ...
+    async def supplement_multi_chunks(self, topic: str) -> None: ...
 
     def available_counts(self, topic: str) -> EvidenceAvailability: ...
 ```
 
-`sample_single` and `sample_multi` must raise `EvidenceShortageError(kind, required, available)` when the evidence pool cannot satisfy the request.
+`sample_single` and `sample_multi` are synchronous because they operate on an in-memory pool; they raise `EvidenceShortageError(kind, required, available)` when the pool cannot satisfy the request.
+
+`expand_retrieval` and `supplement_multi_chunks` are `async` because they perform network I/O (external retrieval). `available_counts` is synchronous because it reads local metadata only.
 
 ---
 
@@ -1026,6 +1030,8 @@ async def execute_round_plan(
 
 Only `EvidenceShortageError` triggers evidence fallback. API timeouts and connection errors do not trigger evidence fallback loops.
 
+Retrieval actions (`expand_retrieval_then_generate`, `supplement_chunks_then_generate`) are dispatched **once** before the first sampling attempt. If the retrieval itself raises a non-evidence error, execution breaks immediately. Subsequent fallback plans (which reduce k) do not re-trigger retrieval.
+
 ```python
 async def execute_topic_plan(
     topic_plan: TopicExecutionPlan,
@@ -1037,6 +1043,31 @@ async def execute_topic_plan(
 ) -> dict:
     fallback_plans = build_fallback_topic_plans(topic_plan, config)
     last_error = None
+
+    # Dispatch retrieval action once, before the fallback loop.
+    # Only EvidenceShortageError from sampling triggers fallback plans;
+    # errors raised during retrieval dispatch break out immediately.
+    try:
+        if topic_plan.action == "expand_retrieval_then_generate":
+            await evidence_manager.expand_retrieval(
+                topic=topic_plan.topic,
+                queries=[topic_plan.topic],
+            )
+        elif topic_plan.action == "supplement_chunks_then_generate":
+            await evidence_manager.supplement_multi_chunks(
+                topic=topic_plan.topic,
+            )
+    except (asyncio.TimeoutError, APIError, ConnectionError) as exc:
+        return {
+            "success": False,
+            "topic": topic_plan.topic,
+            "executed_strategy": topic_plan.retrieval_strategy,
+            "chunks": [],
+            "raw_output": None,
+            "parsed_questions": [],
+            "error": str(exc),
+            "failure_type": classify_failure(exc),
+        }
 
     for candidate_plan in fallback_plans:
         try:
@@ -1404,7 +1435,7 @@ async def run_generation_agent(
     return state
 ```
 
-Note: `update_round_level_state_after_round` (which increments `state.round_num`) is called inside `execute_round_plan`. Do not increment `state.round_num` again in the main loop.
+Note: `update_round_level_state_after_round` (which increments `state.round_num`) is called inside `execute_round_plan`. The only exception is the empty-topics guard above: when `round_plan.topics` is empty but `action != "stop_generation"`, the main loop manually increments `state.round_num` to prevent an infinite loop, since `execute_round_plan` is bypassed. Do not add any other `state.round_num` increments outside these two locations.
 
 ---
 

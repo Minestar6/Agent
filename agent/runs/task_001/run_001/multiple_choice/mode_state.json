@@ -1,0 +1,15 @@
+{
+  "mode": "multiple_choice",
+  "candidate_count": 35,
+  "difficulty_counts": {
+    "medium": 35
+  },
+  "topic_counts": {
+    "Climate Change": 8,
+    "Space Exploration": 10,
+    "Machine Learning": 4,
+    "Quantum Mechanics": 4,
+    "History of Medicine": 9
+  },
+  "stopped_reason": "candidate_pool_sufficient"
+}
