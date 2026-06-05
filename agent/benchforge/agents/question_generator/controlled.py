@@ -226,6 +226,7 @@ class ControlledQuestionGeneratorAgent:
             "model_client": self.model_client,
             "language": plan.language,
             "run_id": plan.run_id,
+            "llm_trace_path": str(self.output_path / "llm_calls.jsonl"),
             "retrieved_documents": self.state.retrieved_documents,
         }
 
@@ -358,7 +359,6 @@ class ControlledQuestionGeneratorAgent:
                 result=result,
                 run_id=plan.run_id,
                 language=plan.language,
-                content_max_length=10000,
             )
 
             if document.status.value == "failed":

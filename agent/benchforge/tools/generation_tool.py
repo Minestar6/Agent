@@ -96,6 +96,7 @@ class GenerationTool(BaseTool):
         requested_questions = parameters["requested_questions"]
         evidence_text = parameters["evidence_text"]
         temperature = parameters.get("temperature", 0.7)
+        llm_trace_path = state.get("llm_trace_path")
 
         # 构建system prompt
         system_prompt = self._load_system_prompt(target_mode)
@@ -112,12 +113,14 @@ class GenerationTool(BaseTool):
         try:
             # 调用LLM
             response = await self.model_client.complete(
+                model=getattr(self.model_client, "model_name", "gpt-4o"),
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt},
                 ],
                 temperature=temperature,
                 max_tokens=2000,
+                llm_trace_path=llm_trace_path,
             )
 
             # 解析响应
@@ -137,6 +140,7 @@ class GenerationTool(BaseTool):
                     "valid_count": len(passed),
                     "valid_rate": valid_rate,
                     "questions": passed,
+                    "llm_call_id": response.get("llm_call_id"),
                 }
             )
 

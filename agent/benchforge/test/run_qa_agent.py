@@ -17,7 +17,7 @@ from benchforge.agents.qa_agent.config_loader import load_qa_agent_config
 
 
 async def main():
-    blueprint, agent_config, model_cfg = load_qa_agent_config(
+    blueprint, agent_config, model_cfg, retrieval_cfg, chunking_cfg, sum_chunking_cfg = load_qa_agent_config(
         project_root / "benchforge/config/qa_agent.yaml"
     )
 
@@ -31,11 +31,18 @@ async def main():
         task_id=blueprint.task_id,
         run_id=blueprint.run_id,
     )
+    # qa_agent.yaml 的 retrieval/chunking 覆盖 question_generator_config 的默认值
+    sys_config.retrieval = retrieval_cfg
+    sys_config.chunking = chunking_cfg
+    sys_config.summarization_chunking = sum_chunking_cfg
 
     client = OpenAIClient(
         api_key=model_cfg["api_key"],
         model_name=model_cfg["model_name"],
         base_url=model_cfg["base_url"],
+        temperature=float(model_cfg.get("temperature", 0.7)),
+        max_tokens=int(model_cfg.get("max_tokens", 2000)),
+        max_retries=int(model_cfg.get("max_retries", 3)),
     )
 
     report = await run_generation_agent(

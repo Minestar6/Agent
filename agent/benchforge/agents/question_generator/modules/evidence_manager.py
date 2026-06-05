@@ -11,6 +11,7 @@ from benchforge.utils import (
     search_wikipedia,
     fetch_wikipedia_page,
     chunk_document,
+    get_document_source,
 )
 from benchforge.utils.multi_chunk import (
     MultiChunkBuilder,
@@ -59,6 +60,11 @@ class EvidenceManager:
         self.retrieved_urls: set[str] = set()
         self.evidence_pools: dict[str, Any] = {}
 
+    def _llm_trace_path(self) -> str | None:
+        if hasattr(self.config, "get_resolved_output_path"):
+            return str(self.config.get_resolved_output_path() / "llm_calls.jsonl")
+        return None
+
     async def prepare_evidence(
         self,
         topic: str,
@@ -83,11 +89,17 @@ class EvidenceManager:
         self.used_chunk_combinations.clear()
         self.retrieved_urls.clear()
 
-        # 检索文档
+        # 检索文档（可选 saliency 重排：按 Wikimedia 访问量筛选最显著页面）
+        _ret = self.config.retrieval
         search_results = search_wikipedia(
             query=topic,
             language=plan.language,
-            max_pages=self.config.retrieval.max_pages,
+            max_pages=_ret.max_pages,
+            request_timeout=_ret.request_timeout,
+            saliency_rerank=_ret.saliency_rerank,
+            saliency_top_k=_ret.saliency_top_k,
+            saliency_start_date=_ret.saliency_start_date,
+            saliency_end_date=_ret.saliency_end_date,
         )
 
         if not search_results:
@@ -109,7 +121,8 @@ class EvidenceManager:
                 result=result,
                 run_id=plan.run_id,
                 language=plan.language,
-                content_max_length=self.config.retrieval.content_max_length,
+                request_timeout=_ret.request_timeout,
+                min_paragraph_tokens=_ret.min_paragraph_tokens,
             )
 
             if document.status.value == "failed":
@@ -117,11 +130,15 @@ class EvidenceManager:
 
             self.documents[document.document_id] = document
 
-            # Stage 1: 生成文档摘要（使用大 chunk 参数，降低成本）
-            summary = await self._generate_document_summary(document)
-            self.document_summaries[document.document_id] = summary
+            # Wikipedia 且导言段非空：直接用，否则 LLM 生成
+            if get_document_source(document.url) == "wikipedia" and document.summary:
+                self.document_summaries[document.document_id] = document.summary
+            else:
+                self.document_summaries[document.document_id] = (
+                    await self._generate_document_summary(document)
+                )
 
-            # Stage 2: 题目生成分块（小 chunk）
+            # 题目生成分块（小 chunk）
             chunks = chunk_document(
                 document=document,
                 chunk_size=self.config.chunking.chunk_size,
@@ -189,6 +206,7 @@ class EvidenceManager:
                     messages=[{"role": "user", "content": prompt}],
                     temperature=0.3,
                     max_tokens=500,  # 增加输出长度，因为输入是更大的 chunk
+                    llm_trace_path=self._llm_trace_path(),
                 )
 
                 # 提取摘要
@@ -219,6 +237,7 @@ class EvidenceManager:
                     messages=[{"role": "user", "content": combine_prompt}],
                     temperature=0.3,
                     max_tokens=800,  # 合并摘要需要更多 tokens
+                    llm_trace_path=self._llm_trace_path(),
                 )
 
                 final_match = re.search(
@@ -586,17 +605,22 @@ Provide a concise overview in <final_summary> tags."""
                     result=result,
                     run_id=run_id,
                     language=language,
-                    content_max_length=self.config.retrieval.content_max_length,
+                    request_timeout=self.config.retrieval.request_timeout,
+                    min_paragraph_tokens=self.config.retrieval.min_paragraph_tokens,
                 )
 
                 if document.status.value == "failed":
                     continue
 
-                # Stage 1: 生成文档摘要（使用大 chunk 参数）
-                summary = await self._generate_document_summary(document)
-                self.document_summaries[document.document_id] = summary
+                # Wikipedia 且导言段非空：直接用，否则 LLM 生成
+                if get_document_source(document.url) == "wikipedia" and document.summary:
+                    self.document_summaries[document.document_id] = document.summary
+                else:
+                    self.document_summaries[document.document_id] = (
+                        await self._generate_document_summary(document)
+                    )
 
-                # Stage 2: 题目生成分块（小 chunk）
+                # 题目生成分块（小 chunk）
                 chunks = chunk_document(
                     document=document,
                     chunk_size=self.config.chunking.chunk_size,

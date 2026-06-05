@@ -95,7 +95,6 @@ class RetrievalTool(BaseTool):
                         result=result,
                         run_id=run_id,
                         language=language,
-                        content_max_length=state.get("content_max_length", 10000),
                     )
 
                     if document.status.value == "failed":

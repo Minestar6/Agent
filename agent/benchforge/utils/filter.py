@@ -99,10 +99,11 @@ class LightweightFilter:
         if len(question_text.strip()) < 10:
             return False, "问题过短"
 
-        # 7. 检查答案长度（太短可能无意义）
-        answer_text = item.get("answer", "")
-        if len(answer_text.strip()) < 5:
-            return False, "答案过短"
+        # 7. 检查答案长度（MCQ 答案是单字母，跳过长度检查）
+        if mode != "multiple_choice":
+            answer_text = item.get("answer", "")
+            if len(answer_text.strip()) < 5:
+                return False, "答案过短"
 
         # 8. 检查 question_type（Yourbench 字段）
         question_type = item.get("question_type", "").lower()

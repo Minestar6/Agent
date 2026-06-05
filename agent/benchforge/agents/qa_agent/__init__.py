@@ -5,7 +5,7 @@ from .state import GlobalState, ModeState, ModeRoundPlan
 from .schema import Blueprint, AgentConfig
 from .planner import build_mode_round_plan
 from .executor import mode_should_stop, execute_mode_round_plan
-from .storage import save_mode_outputs, save_global_outputs, save_generation_report
+from .storage import save_mode_outputs, save_global_outputs, save_generation_report, save_shared_state
 
 __all__ = [
     "run_generation_agent",
@@ -20,4 +20,5 @@ __all__ = [
     "save_mode_outputs",
     "save_global_outputs",
     "save_generation_report",
+    "save_shared_state",
 ]

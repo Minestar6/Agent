@@ -16,17 +16,13 @@ class OpenAIClient(BaseModelClient):
         api_key: str,
         base_url: str = "https://api.openai.com/v1",
         model_name: str = "gpt-4o-mini",
+        temperature: float = 0.7,
+        max_tokens: int = 2000,
         max_retries: int = 3,
     ):
-        """初始化客户端。
-
-        Args:
-            api_key: API 密钥
-            base_url: API 基础 URL
-            model_name: 默认模型名称
-            max_retries: 最大重试次数
-        """
         self.model_name = model_name
+        self.temperature = temperature
+        self.max_tokens = max_tokens
         self.client = openai.AsyncOpenAI(
             api_key=api_key,
             base_url=base_url,
@@ -42,27 +38,55 @@ class OpenAIClient(BaseModelClient):
         **kwargs: Any,
     ) -> dict[str, Any]:
         """完成对话。"""
+        llm_trace_path = kwargs.pop("llm_trace_path", None)
+        llm_call_id = self._new_llm_call_id()
+        request_record = {
+            "model": model,
+            "messages": messages,
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+            "kwargs": kwargs,
+        }
         start_time = time.time()
 
-        response = await self.client.chat.completions.create(
-            model=model,
-            messages=messages,
-            temperature=temperature,
-            max_tokens=max_tokens,
-            **kwargs,
-        )
+        try:
+            response = await self.client.chat.completions.create(
+                model=model,
+                messages=messages,
+                temperature=temperature,
+                max_tokens=max_tokens,
+                **kwargs,
+            )
+        except Exception as exc:
+            self._record_llm_call(
+                llm_trace_path=llm_trace_path,
+                llm_call_id=llm_call_id,
+                request=request_record,
+                response=None,
+                error=str(exc),
+            )
+            raise
 
         latency = time.time() - start_time
         text = response.choices[0].message.content or ""
         raw = response.model_dump()
 
-        return {
+        result = {
             "text": text,
             "input_tokens": raw.get("usage", {}).get("prompt_tokens", 0),
             "output_tokens": raw.get("usage", {}).get("completion_tokens", 0),
             "latency": latency,
             "raw": raw,
+            "llm_call_id": llm_call_id,
         }
+        self._record_llm_call(
+            llm_trace_path=llm_trace_path,
+            llm_call_id=llm_call_id,
+            request=request_record,
+            response=result,
+            error=None,
+        )
+        return result
 
     async def batch_complete(
         self,

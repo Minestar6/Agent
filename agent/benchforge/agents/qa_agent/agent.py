@@ -1,5 +1,6 @@
 """Mode-Staged Generation Agent — main entry point."""
 
+import asyncio
 from pathlib import Path
 from typing import Any
 
@@ -13,7 +14,7 @@ from .executor import (
     mode_should_stop,
     update_mode_trace,
 )
-from .storage import save_mode_outputs, save_global_outputs, save_generation_report
+from .storage import save_mode_outputs, save_global_outputs, save_generation_report, save_shared_state
 
 
 async def run_mode_generation(
@@ -60,6 +61,7 @@ async def run_mode_generation(
             mode_state=mode_state,
             evidence_manager=evidence_manager,
             generator=generator,
+            mode_cfg=mode_cfg,
         )
 
         total_generated = sum(r.get("generated_count", 0) for r in round_results)
@@ -103,22 +105,25 @@ async def run_generation_agent(
     all_single_units: dict[str, list] = {}
     all_multi_units: dict[str, list] = {}
 
-    logger.info(f"Preparing evidence for {len(blueprint.topics)} topics")
-    for topic in blueprint.topics:
-        chunks, evidence_pool = await evidence_manager.prepare_evidence(topic, blueprint)
+    logger.info(f"Preparing evidence for {len(blueprint.topics)} topics (parallel)")
+
+    async def _prepare_topic(topic: str):
+        return topic, await evidence_manager.prepare_evidence(topic, blueprint)
+
+    topic_evidence = await asyncio.gather(*[_prepare_topic(t) for t in blueprint.topics])
+
+    chunked_rows_all: list[dict] = []
+    for topic, (chunks, evidence_pool) in topic_evidence:
         evidence_manager.evidence_pools[topic] = evidence_pool
 
-        # Build per-document rows (YourBench "chunked" subset style):
-        # each row = one document with document_text, document_summary, chunks list, multihop_chunks list.
         chunks_by_doc: dict[str, list] = {}
         for chunk in chunks:
             chunks_by_doc.setdefault(chunk.document_id, []).append(chunk)
 
-        chunked_rows = []
         for doc_id, doc_chunks in chunks_by_doc.items():
             doc_chunks_sorted = sorted(doc_chunks, key=lambda c: c.chunk_index)
             source_doc = evidence_manager.documents.get(doc_id)
-            chunked_rows.append({
+            chunked_rows_all.append({
                 "document_id": doc_id,
                 "topic": topic,
                 "document_title": source_doc.title if source_doc else "",
@@ -131,10 +136,6 @@ async def run_generation_agent(
                 ],
             })
 
-        if chunked_rows:
-            evidence_store.append_jsonl("chunked.jsonl", chunked_rows)
-
-        # Evidence pool: single and multi chunk units with scores
         if evidence_pool:
             all_single_units[topic] = [
                 {
@@ -158,6 +159,8 @@ async def run_generation_agent(
                 for u in evidence_pool.multi_chunks
             ]
 
+    if chunked_rows_all:
+        evidence_store.append_jsonl("chunked.jsonl", chunked_rows_all)
     evidence_store.save_json("single_units.json", all_single_units)
     evidence_store.save_json("multi_units.json", all_multi_units)
 
@@ -192,6 +195,7 @@ async def run_generation_agent(
         mode_cfgs=dict(blueprint.modes),
         config=config,
     )
+    save_shared_state(blueprint)
 
     logger.info(f"Generation complete. Output: runs/{blueprint.task_id}/{blueprint.run_id}/")
     return report

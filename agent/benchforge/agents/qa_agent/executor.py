@@ -1,5 +1,7 @@
 """Execution logic: round execution, state update, stop conditions."""
 
+import asyncio
+from pathlib import Path
 from typing import Any
 
 from loguru import logger
@@ -7,6 +9,9 @@ from loguru import logger
 from .state import GlobalState, ModeState, ModeRoundPlan
 from .planner import mode_candidate_target, mode_initial_breadth_not_done
 from .sampling import sample_chunks, raw_chunk_ids, record_global_chunk_usage
+from benchforge.utils.filter import LightweightFilter
+
+_question_filter = LightweightFilter()
 
 
 def normalize_difficulty(value: Any) -> str:
@@ -98,6 +103,92 @@ def mode_should_stop(
     return False, None
 
 
+async def _generate_for_topic(
+    topic: str,
+    round_plan: ModeRoundPlan,
+    blueprint: Any,
+    global_state: GlobalState,
+    mode_state: ModeState,
+    evidence_manager: Any,
+    generator: Any,
+) -> dict:
+    """Run one topic's LLM generation; returns raw result without state mutation."""
+    try:
+        chunks, duplicate_combination = sample_chunks(
+            evidence_manager=evidence_manager,
+            topic=topic,
+            mode=round_plan.mode,
+            difficulty=round_plan.difficulty,
+            single_k=round_plan.single_k,
+            multi_k=round_plan.multi_k,
+            global_used_combinations=global_state.used_chunk_combinations,
+            global_chunk_usage_counts=global_state.chunk_usage_counts,
+            round_num=mode_state.round_in_mode,
+        )
+
+        evidence_pool = evidence_manager.evidence_pools.get(topic)
+        batch = _make_batch(topic, round_plan, chunks, evidence_pool)
+        document_summary = evidence_manager.get_document_summary(batch, evidence_pool) if evidence_pool else ""
+        llm_trace_path = str(Path("runs") / blueprint.task_id / blueprint.run_id / "llm_calls.jsonl")
+
+        raw_items, _, llm_call_id = await generator.generate(
+            batch=batch,
+            model_client=evidence_manager.model_client,
+            evidence_pool=evidence_pool,
+            document_summary=document_summary,
+            language=blueprint.language,
+            llm_trace_path=llm_trace_path,
+        )
+
+        raw_questions = parse_questions(raw_items)
+        accepted_questions, rejected_questions = _question_filter.filter_questions(raw_questions)
+        filter_failures = [
+            {
+                "question": item.get("question", ""),
+                "reason": reason,
+            }
+            for item, reason in rejected_questions
+        ]
+
+        chunk_id_list = raw_chunk_ids(chunks)
+        chunk_text_map: dict[str, str] = {}
+        for u in chunks:
+            if hasattr(u, "chunk_ids") and hasattr(u, "texts"):
+                for cid, txt in zip(u.chunk_ids, u.texts):
+                    chunk_text_map[cid] = txt
+            elif hasattr(u, "chunk_id"):
+                chunk_text_map[u.chunk_id] = getattr(u, "text", "")
+        for q in accepted_questions:
+            q["chunk_ids"] = chunk_id_list
+            q["chunks"] = [chunk_text_map.get(cid, "") for cid in chunk_id_list]
+            q["topic"] = topic
+
+        return {
+            "topic": topic,
+            "success": True,
+            "parsed_questions": accepted_questions,
+            "raw_count": len(raw_questions),
+            "filtered_count": len(accepted_questions),
+            "filter_failures": filter_failures,
+            "llm_call_id": llm_call_id,
+            "chunks": chunks,
+            "duplicate_combination": duplicate_combination,
+            "error": None,
+        }
+
+    except Exception as exc:
+        logger.warning(f"Topic {topic} failed in round {round_plan.round_in_mode}: {exc}")
+        return {
+            "topic": topic,
+            "success": False,
+            "parsed_questions": [],
+            "chunks": [],
+            "duplicate_combination": False,
+            "error": str(exc),
+            "error_type": exc.__class__.__name__,
+        }
+
+
 async def execute_mode_round_plan(
     round_plan: ModeRoundPlan,
     blueprint: Any,
@@ -106,49 +197,36 @@ async def execute_mode_round_plan(
     mode_state: ModeState,
     evidence_manager: Any,
     generator: Any,
+    mode_cfg: Any = None,
 ) -> list[dict]:
+    # All topics run concurrently; state mutations happen serially after gather.
+    topic_results = await asyncio.gather(*[
+        _generate_for_topic(
+            topic=topic,
+            round_plan=round_plan,
+            blueprint=blueprint,
+            global_state=global_state,
+            mode_state=mode_state,
+            evidence_manager=evidence_manager,
+            generator=generator,
+        )
+        for topic in round_plan.topics
+    ])
+
     round_results = []
+    for res in topic_results:
+        topic = res["topic"]
+        if res["success"]:
+            parsed_questions = res["parsed_questions"]
+            chunks = res["chunks"]
 
-    for topic in round_plan.topics:
-        result: dict
-        try:
-            chunks, duplicate_combination = sample_chunks(
-                evidence_manager=evidence_manager,
-                topic=topic,
-                mode=round_plan.mode,
-                difficulty=round_plan.difficulty,
-                single_k=round_plan.single_k,
-                multi_k=round_plan.multi_k,
-                global_used_combinations=global_state.used_chunk_combinations,
-                global_chunk_usage_counts=global_state.chunk_usage_counts,
-                round_num=mode_state.round_in_mode,
-            )
-
-            evidence_pool = evidence_manager.evidence_pools.get(topic)
-            batch = _make_batch(topic, round_plan, chunks, evidence_pool)
-            document_summary = evidence_manager.get_document_summary(batch, evidence_pool) if evidence_pool else ""
-
-            raw_items, _ = await generator.generate(
-                batch=batch,
-                model_client=evidence_manager.model_client,
-                evidence_pool=evidence_pool,
-                document_summary=document_summary,
-                language=blueprint.language,
-            )
-
-            parsed_questions = parse_questions(raw_items)
-
-            # Inject chunk provenance into every question for downstream citation verification.
-            # Mirrors YourBench prepared_lighteval: chunk_ids + chunks (texts) on each row.
-            chunk_id_list = raw_chunk_ids(chunks)
-            chunk_text_map = {
-                u.chunk_id: getattr(u, "text", "")
-                for u in chunks if hasattr(u, "chunk_id")
-            }
-            for q in parsed_questions:
-                q["chunk_ids"] = chunk_id_list
-                q["chunks"] = [chunk_text_map.get(cid, "") for cid in chunk_id_list]
-                q["topic"] = topic
+            if mode_cfg is not None:
+                target = mode_candidate_target(mode_cfg, config)
+                remaining_quota = target - len(mode_state.candidate_questions)
+                if remaining_quota <= 0:
+                    parsed_questions = []
+                elif len(parsed_questions) > remaining_quota:
+                    parsed_questions = parsed_questions[:remaining_quota]
 
             update_mode_state(
                 mode_state=mode_state,
@@ -156,24 +234,28 @@ async def execute_mode_round_plan(
                 round_plan=round_plan,
                 parsed_questions=parsed_questions,
             )
-
-            # Record chunk usage regardless of whether parsed_questions is empty.
             record_global_chunk_usage(
                 global_state=global_state,
                 chunks=chunks,
                 max_size=config.runtime.max_used_chunk_combinations,
             )
-
-            result = {
+            round_results.append({
                 "topic": topic,
                 "success": True,
                 "generated_count": len(parsed_questions),
+                "raw_count": res.get("raw_count", len(parsed_questions)),
+                "filtered_count": res.get("filtered_count", len(parsed_questions)),
+                "filter_rejected": (
+                    res.get("raw_count", len(parsed_questions)) > 0
+                    and res.get("filtered_count", len(parsed_questions)) == 0
+                ),
+                "filter_failures": res.get("filter_failures", []),
+                "llm_call_id": res.get("llm_call_id"),
                 "chunks": raw_chunk_ids(chunks),
-                "duplicate_combination": duplicate_combination,
+                "duplicate_combination": res["duplicate_combination"],
                 "error": None,
-            }
-
-        except Exception as exc:
+            })
+        else:
             mode_state.failures_count += 1
             global_state.global_failures += 1
             mode_state.failures.append({
@@ -181,25 +263,21 @@ async def execute_mode_round_plan(
                 "round_in_mode": round_plan.round_in_mode,
                 "topic": topic,
                 "difficulty": round_plan.difficulty,
-                "error": str(exc),
-                "error_type": exc.__class__.__name__,
+                "error": res["error"],
+                "error_type": res.get("error_type", ""),
             })
-            logger.warning(f"Topic {topic} failed in round {round_plan.round_in_mode}: {exc}")
-            result = {
+            round_results.append({
                 "topic": topic,
                 "success": False,
                 "generated_count": 0,
                 "chunks": [],
                 "duplicate_combination": False,
-                "error": str(exc),
-                "error_type": exc.__class__.__name__,
-            }
+                "error": res["error"],
+                "error_type": res.get("error_type", ""),
+            })
 
-        finally:
-            if round_plan.strategy == "initial_breadth":
-                mode_state.initial_coverage.add(topic)
-
-        round_results.append(result)
+        if round_plan.strategy == "initial_breadth":
+            mode_state.initial_coverage.add(topic)
 
     return round_results
 

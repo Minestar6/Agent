@@ -7,7 +7,7 @@ from typing import Any
 from benchforge.models.base import BaseModelClient
 
 
-class FakeModelClient:
+class FakeModelClient(BaseModelClient):
     """假模型客户端，用于测试。"""
 
     def __init__(self, delay: float = 0.1):
@@ -21,10 +21,13 @@ class FakeModelClient:
         messages: list[dict[str, str]],
         temperature: float = 0.7,
         max_tokens: int = 2000,
+        **kwargs: Any,
     ) -> dict[str, Any]:
         """返回假的响应。"""
         self.call_count += 1
         await asyncio.sleep(self.delay)
+        llm_trace_path = kwargs.pop("llm_trace_path", None)
+        llm_call_id = self._new_llm_call_id()
 
         # 根据输入生成简单的假响应
         user_content = messages[-1].get("content", "") if messages else ""
@@ -46,13 +49,28 @@ class FakeModelClient:
   }
 ]"""
 
-        return {
+        result = {
             "text": fake_response,
             "input_tokens": 100,
             "output_tokens": 50,
             "latency": self.delay,
             "raw": {},
+            "llm_call_id": llm_call_id,
         }
+        self._record_llm_call(
+            llm_trace_path=llm_trace_path,
+            llm_call_id=llm_call_id,
+            request={
+                "model": model,
+                "messages": messages,
+                "temperature": temperature,
+                "max_tokens": max_tokens,
+                "kwargs": kwargs,
+            },
+            response=result,
+            error=None,
+        )
+        return result
 
     async def batch_complete(
         self,

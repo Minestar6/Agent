@@ -326,10 +326,8 @@ class GenerationReport(BaseModel):
 class RetrievalConfig(BaseModel):
     """检索配置模式（旧版兼容）。"""
     max_pages: int = 5
-    max_results_per_query: int = 10
     language: str = "en"
     summary_length: int = 500
-    content_max_length: int = 10000
 
 
 class GenerationConfig(BaseModel):

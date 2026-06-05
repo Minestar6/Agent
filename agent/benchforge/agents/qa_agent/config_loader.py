@@ -2,6 +2,8 @@
 
 import os
 import re
+import secrets
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -13,6 +15,7 @@ from benchforge.agents.qa_agent.schema import (
     ChunkMixConfig, ChunkMixDifficulty, ModeAdjustment,
     GenerationYield, ChunkLimitsForMode, ChunkKLimit, RuntimeConfig,
 )
+from benchforge.config.config import RetrievalConfig, ChunkingConfig, SummarizationChunkingConfig
 
 
 def _load_dotenv(env_path: Path) -> None:
@@ -47,11 +50,19 @@ def _expand_recursive(data: Any) -> Any:
     return data
 
 
-def load_qa_agent_config(path: str | Path) -> tuple[Blueprint, AgentConfig, dict]:
-    """Returns (blueprint, agent_config, model_cfg).
+def _resolve_run_id(value: str) -> str:
+    """Return value as-is unless it's 'auto'/empty, then generate a time-based ID."""
+    if not value or value.strip().lower() == "auto":
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        suffix = secrets.token_hex(2)  # 4-char random hex
+        return f"run_{ts}_{suffix}"
+    return value
 
-    model_cfg keys: api_key, base_url, model_name, temperature, max_tokens, max_retries.
-    """
+
+def load_qa_agent_config(
+    path: str | Path,
+) -> tuple[Blueprint, AgentConfig, dict, RetrievalConfig, ChunkingConfig, SummarizationChunkingConfig]:
+    """Returns (blueprint, agent_config, model_cfg, retrieval_cfg, chunking_cfg, summarization_chunking_cfg)."""
     path = Path(path)
     _load_dotenv(path.parent.parent.parent / ".env")  # project root .env
 
@@ -63,7 +74,7 @@ def load_qa_agent_config(path: str | Path) -> tuple[Blueprint, AgentConfig, dict
 
     blueprint = Blueprint(
         task_id=run["task_id"],
-        run_id=run["run_id"],
+        run_id=_resolve_run_id(run.get("run_id", "auto")),
         language=run["language"],
         topics=bp_raw["topics"],
         modes={
@@ -107,4 +118,8 @@ def load_qa_agent_config(path: str | Path) -> tuple[Blueprint, AgentConfig, dict
 
     model_cfg = {k: str(v) for k, v in raw.get("model", {}).items()}
 
-    return blueprint, agent_config, model_cfg
+    retrieval_cfg = RetrievalConfig(**raw["retrieval"]) if "retrieval" in raw else RetrievalConfig()
+    chunking_cfg = ChunkingConfig(**raw["chunking"]) if "chunking" in raw else ChunkingConfig()
+    sum_chunking_cfg = SummarizationChunkingConfig(**raw["summarization_chunking"]) if "summarization_chunking" in raw else SummarizationChunkingConfig()
+
+    return blueprint, agent_config, model_cfg, retrieval_cfg, chunking_cfg, sum_chunking_cfg

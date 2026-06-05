@@ -59,12 +59,13 @@ class ModelConfig(BaseModel):
 
 class RetrievalConfig(BaseModel):
     """检索配置。"""
-    max_pages: int = 5
-    max_results_per_query: int = 10
-    summary_length: int = 500
-    content_max_length: int = 10000
+    max_pages: int = 5            # saliency 关闭时的回退页面数（不暴露在 YAML）
     request_timeout: int = 10
-    rate_limit_delay: float = 0.5
+    saliency_rerank: bool = False
+    saliency_top_k: int = 3
+    saliency_start_date: str = "2022010100"
+    saliency_end_date: str = "2025010100"
+    min_paragraph_tokens: int = 20
 
 
 class ChunkingConfig(BaseModel):

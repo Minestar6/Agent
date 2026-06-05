@@ -292,6 +292,7 @@ class PlanDrivenQuestionGenerationAgent:
             "model_client": self.model_client,
             "language": plan.language,
             "run_id": plan.run_id,
+            "llm_trace_path": str(self.output_path / "llm_calls.jsonl"),
             "round_num": state.current_round,
             "state": self.runtime_state,
         }

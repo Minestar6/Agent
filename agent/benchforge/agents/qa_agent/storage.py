@@ -1,6 +1,7 @@
 """Storage helpers: save mode outputs, global outputs, generation report."""
 
 import json
+from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
@@ -41,6 +42,35 @@ def save_global_outputs(task_id: str, run_id: str, global_state: GlobalState) ->
         "global_failures": global_state.global_failures,
         "total_used_combinations": len(global_state.used_chunk_combinations),
     })
+
+
+def save_shared_state(blueprint: Any) -> dict:
+    """Write runs/{task_id}/{run_id}/shared_state.json for downstream agents."""
+    base = Path("runs") / blueprint.task_id / blueprint.run_id
+    task_id = blueprint.task_id
+    run_id = blueprint.run_id
+
+    mode_artifacts = {}
+    for mode in blueprint.modes:
+        mode_artifacts[f"{mode}_candidate_pool"] = str(base / mode / "candidate_pool.json")
+
+    shared_state = {
+        "task_id": task_id,
+        "run_id": run_id,
+        "blueprint": asdict(blueprint),
+        "artifacts": {
+            **mode_artifacts,
+            "chunked_evidence": str(base / "evidence" / "chunked.jsonl"),
+            "llm_calls": str(base / "llm_calls.jsonl"),
+            "generation_report": str(base / "generation_report.json"),
+        },
+        "agent_status": {
+            "generation": "completed",
+            "verification": "pending",
+        },
+    }
+    _write_json(base / "shared_state.json", shared_state)
+    return shared_state
 
 
 def save_generation_report(

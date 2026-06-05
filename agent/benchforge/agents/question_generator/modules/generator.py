@@ -27,7 +27,8 @@ class Generator:
         evidence_pool: Any,
         document_summary: str,
         language: str = "en",
-    ) -> tuple[list[dict[str, Any]], int]:
+        llm_trace_path: str | None = None,
+    ) -> tuple[list[dict[str, Any]], int, str | None]:
         """生成题目。
 
         使用 yourbench 风格的 prompt 模板。
@@ -38,9 +39,10 @@ class Generator:
             evidence_pool: 证据池
             document_summary: 文档摘要
             language: 语言
+            llm_trace_path: 可选，LLM调用轨迹JSONL路径
 
         Returns:
-            (有效题目列表, 原始候选数量)
+            (有效题目列表, 原始候选数量, llm_call_id)
         """
         # 获取证据单元
         single_units = [
@@ -68,19 +70,20 @@ class Generator:
 
         # 调用 LLM
         response = await model_client.complete(
-            model=getattr(model_client, 'model_name', 'gpt-4o'),
+            model=model_client.model_name,
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},
             ],
-            temperature=getattr(model_client, 'temperature', 0.7),
-            max_tokens=getattr(model_client, 'max_tokens', 2000),
+            temperature=model_client.temperature,
+            max_tokens=model_client.max_tokens,
+            llm_trace_path=llm_trace_path,
         )
 
         # 解析响应
         raw_items = parse_llm_response(response["text"])
 
-        return raw_items, len(raw_items)
+        return raw_items, len(raw_items), response.get("llm_call_id")
 
     def _load_system_prompt(self, mode: str) -> str:
         """从文件加载系统 prompt。

@@ -1,19 +1,24 @@
 """Chunk sampling helpers: raw_chunk_ids, dedup, record usage, sample_chunks wrapper."""
 
+import logging
 from typing import Any
 
 from .state import GlobalState
+
+logger = logging.getLogger(__name__)
 
 
 def raw_chunk_ids(chunks: list[Any]) -> list[str]:
     ids = []
     for unit in chunks:
-        if hasattr(unit, "raw_chunk_ids"):
-            ids.extend(unit.raw_chunk_ids)
+        if hasattr(unit, "chunk_ids") and isinstance(unit.chunk_ids, list):
+            # MultiChunkUnit: chunk_ids is a list[str]
+            ids.extend(unit.chunk_ids)
         elif hasattr(unit, "chunk_id"):
             ids.append(unit.chunk_id)
         else:
-            ids.append(str(unit))
+            logger.warning("raw_chunk_ids: unrecognized chunk type %s, skipping", type(unit))
+            continue
     return sorted(set(ids))
 
 

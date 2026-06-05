@@ -1,8 +1,12 @@
 """Unit tests for qa_agent modules."""
 
 import sys
+import json
 from pathlib import Path
 from dataclasses import field
+from types import SimpleNamespace
+
+import pytest
 
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
@@ -20,8 +24,9 @@ from benchforge.agents.qa_agent.planner import (
     mode_candidate_target, mode_initial_breadth_not_done,
 )
 from benchforge.agents.qa_agent.executor import (
-    normalize_difficulty, parse_questions, mode_should_stop,
+    normalize_difficulty, parse_questions, mode_should_stop, execute_mode_round_plan,
 )
+from benchforge.agents.qa_agent.state import ModeRoundPlan
 from benchforge.agents.qa_agent.sampling import raw_chunk_ids, record_global_chunk_usage
 
 
@@ -235,10 +240,20 @@ def test_raw_chunk_ids_single():
 
 def test_raw_chunk_ids_multi():
     from types import SimpleNamespace
-    unit = SimpleNamespace(raw_chunk_ids=["doc_a::chunk_0", "doc_b::chunk_0"])
+    # Mirrors MultiChunkUnit.chunk_ids (list[str]), not raw_chunk_ids
+    unit = SimpleNamespace(chunk_ids=["doc_a::chunk_0", "doc_b::chunk_0"])
     ids = raw_chunk_ids([unit])
     assert "doc_a::chunk_0" in ids and "doc_b::chunk_0" in ids
     print("PASS test_raw_chunk_ids_multi")
+
+
+def test_raw_chunk_ids_mixed():
+    from types import SimpleNamespace
+    single = SimpleNamespace(chunk_id="doc_a::chunk_0")
+    multi = SimpleNamespace(chunk_ids=["doc_b::chunk_0", "doc_b::chunk_1"])
+    ids = raw_chunk_ids([single, multi])
+    assert ids == ["doc_a::chunk_0", "doc_b::chunk_0", "doc_b::chunk_1"]
+    print("PASS test_raw_chunk_ids_mixed")
 
 
 # ── record_global_chunk_usage ─────────────────────────────────────────────────
@@ -281,7 +296,7 @@ def test_build_adaptive_plan_after_breadth():
 
 def test_load_qa_agent_config():
     from benchforge.agents.qa_agent.config_loader import load_qa_agent_config
-    blueprint, agent_config, model_cfg = load_qa_agent_config(
+    blueprint, agent_config, model_cfg, *_ = load_qa_agent_config(
         project_root / "benchforge/config/qa_agent.yaml"
     )
     assert blueprint.task_id
@@ -290,6 +305,179 @@ def test_load_qa_agent_config():
     assert agent_config.candidate_pool.target_multiplier > 0
     assert "api_key" in model_cfg
     print("PASS test_load_qa_agent_config")
+
+
+def test_save_shared_state_contains_verify_inputs(tmp_path):
+    from benchforge.agents.qa_agent.storage import save_shared_state
+
+    bp = _blueprint(topics=["Topic A"], qa_count=10, mcq_count=8)
+    cwd = Path.cwd()
+    try:
+        import os
+        os.chdir(tmp_path)
+        save_shared_state(bp)
+
+        shared_state_path = Path("runs") / bp.task_id / bp.run_id / "shared_state.json"
+        assert shared_state_path.exists()
+
+        data = json.loads(shared_state_path.read_text(encoding="utf-8"))
+        assert data["task_id"] == bp.task_id
+        assert data["run_id"] == bp.run_id
+        assert data["blueprint"]["topics"] == ["Topic A"]
+        assert data["artifacts"]["qa_candidate_pool"].endswith("/qa/candidate_pool.json")
+        assert data["artifacts"]["multiple_choice_candidate_pool"].endswith("/multiple_choice/candidate_pool.json")
+        assert data["artifacts"]["chunked_evidence"].endswith("/evidence/chunked.jsonl")
+        assert data["agent_status"]["generation"] == "completed"
+    finally:
+        import os
+        os.chdir(cwd)
+
+
+class _FakeEvidenceManager:
+    def __init__(self, evidence_pool):
+        self.evidence_pools = {"Topic A": evidence_pool}
+        self.model_client = object()
+
+    def sample(
+        self,
+        evidence_pool,
+        topic,
+        target_mode,
+        target_difficulty,
+        prefer_multi_chunk=False,
+        round_num=1,
+        remaining=1,
+    ):
+        return SimpleNamespace(
+            single_chunk_ids=["doc_a::chunk_0"],
+            multi_chunk_ids=[],
+        )
+
+    def get_document_summary(self, batch, evidence_pool):
+        return "summary"
+
+
+@pytest.mark.asyncio
+async def test_execute_mode_round_plan_records_generation_diagnostics_for_filtered_results():
+    bp = _blueprint(topics=["Topic A"], qa_count=2)
+    cfg = _config()
+    gs = GlobalState()
+    ms = ModeState(mode="qa")
+    round_plan = ModeRoundPlan(
+        mode="qa",
+        round_in_mode=1,
+        strategy="initial_breadth",
+        difficulty="medium",
+        topics=("Topic A",),
+        single_k=1,
+        multi_k=0,
+        target_candidates_per_topic=1,
+        reason="test",
+    )
+    evidence_pool = SimpleNamespace(
+        single_chunks=[
+            SimpleNamespace(
+                chunk_id="doc_a::chunk_0",
+                document_id="doc_a",
+                text="source text",
+            )
+        ],
+        multi_chunks=[],
+    )
+    evidence_manager = _FakeEvidenceManager(evidence_pool)
+
+    class FakeGenerator:
+        async def generate(self, **kwargs):
+            return (
+                [{"question": "Why?", "answer": "Because."}],
+                1,
+                "call_filtered",
+            )
+
+    round_results = await execute_mode_round_plan(
+        round_plan=round_plan,
+        blueprint=bp,
+        config=cfg,
+        global_state=gs,
+        mode_state=ms,
+        evidence_manager=evidence_manager,
+        generator=FakeGenerator(),
+        mode_cfg=bp.modes["qa"],
+    )
+
+    result = round_results[0]
+    assert result["success"] is True
+    assert result["generated_count"] == 0
+    assert result["raw_count"] == 1
+    assert result["filtered_count"] == 0
+    assert result["filter_rejected"] is True
+    assert result["llm_call_id"] == "call_filtered"
+    assert result["filter_failures"][0]["reason"] == "引用为空"
+
+
+@pytest.mark.asyncio
+async def test_execute_mode_round_plan_records_generation_diagnostics_for_accepted_results():
+    bp = _blueprint(topics=["Topic A"], qa_count=2)
+    cfg = _config()
+    gs = GlobalState()
+    ms = ModeState(mode="qa")
+    round_plan = ModeRoundPlan(
+        mode="qa",
+        round_in_mode=1,
+        strategy="initial_breadth",
+        difficulty="medium",
+        topics=("Topic A",),
+        single_k=1,
+        multi_k=0,
+        target_candidates_per_topic=1,
+        reason="test",
+    )
+    evidence_pool = SimpleNamespace(
+        single_chunks=[
+            SimpleNamespace(
+                chunk_id="doc_a::chunk_0",
+                document_id="doc_a",
+                text="source text for citations",
+            )
+        ],
+        multi_chunks=[],
+    )
+    evidence_manager = _FakeEvidenceManager(evidence_pool)
+
+    class FakeGenerator:
+        async def generate(self, **kwargs):
+            return (
+                [
+                    {
+                        "question": "What is happening here?",
+                        "answer": "A valid answer.",
+                        "question_mode": "qa",
+                        "citations": ["source text for citations"],
+                    }
+                ],
+                1,
+                "call_accepted",
+            )
+
+    round_results = await execute_mode_round_plan(
+        round_plan=round_plan,
+        blueprint=bp,
+        config=cfg,
+        global_state=gs,
+        mode_state=ms,
+        evidence_manager=evidence_manager,
+        generator=FakeGenerator(),
+        mode_cfg=bp.modes["qa"],
+    )
+
+    result = round_results[0]
+    assert result["success"] is True
+    assert result["generated_count"] == 1
+    assert result["raw_count"] == 1
+    assert result["filtered_count"] == 1
+    assert result["filter_rejected"] is False
+    assert result["llm_call_id"] == "call_accepted"
+    assert result["filter_failures"] == []
 
 
 # ── runner ────────────────────────────────────────────────────────────────────

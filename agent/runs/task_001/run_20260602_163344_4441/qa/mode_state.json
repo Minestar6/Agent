@@ -1,0 +1,15 @@
+{
+  "mode": "qa",
+  "candidate_count": 50,
+  "difficulty_counts": {
+    "medium": 18,
+    "hard": 7,
+    "easy": 25
+  },
+  "topic_counts": {
+    "Artificial Intelligence": 17,
+    "Renewable Energy": 17,
+    "Human Evolution": 16
+  },
+  "stopped_reason": "candidate_pool_sufficient"
+}

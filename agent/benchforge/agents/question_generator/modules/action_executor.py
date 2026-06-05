@@ -202,6 +202,7 @@ class ActionExecutor:
         evidence_pool = context.get("evidence_pool")
         model_client = context.get("model_client")
         language = context.get("language", "en")
+        llm_trace_path = context.get("llm_trace_path")
         round_num = context.get("round_num", 1)
         planner = context.get("planner")
 
@@ -220,12 +221,13 @@ class ActionExecutor:
         document_summary = self.evidence_manager.get_document_summary(batch, evidence_pool)
 
         # 3. 生成题目
-        questions, raw_candidate_count = await self.generator.generate(
+        questions, raw_candidate_count, llm_call_id = await self.generator.generate(
             batch=batch,
             model_client=model_client,
             evidence_pool=evidence_pool,
             document_summary=document_summary,
             language=language,
+            llm_trace_path=llm_trace_path,
         )
 
         # 4. 验证题目
@@ -246,6 +248,7 @@ class ActionExecutor:
                 "num_rejected": num_rejected,
                 "questions": validated_questions,
                 "completed_counts": completed_counts,
+                "llm_call_id": llm_call_id,
             },
         )
 

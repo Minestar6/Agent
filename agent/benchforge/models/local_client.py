@@ -36,6 +36,8 @@ class OllamaClient(BaseModelClient):
         **kwargs: Any,
     ) -> dict[str, Any]:
         """完成对话。"""
+        llm_trace_path = kwargs.pop("llm_trace_path", None)
+        llm_call_id = self._new_llm_call_id()
         start_time = time.time()
 
         # 构建请求
@@ -50,22 +52,41 @@ class OllamaClient(BaseModelClient):
         }
         payload["options"].update(kwargs.get("options", {}))
 
-        response = await self.client.post(
-            f"{self.base_url}/api/chat",
-            json=payload,
-        )
-        response.raise_for_status()
-        data = response.json()
+        try:
+            response = await self.client.post(
+                f"{self.base_url}/api/chat",
+                json=payload,
+            )
+            response.raise_for_status()
+            data = response.json()
+        except Exception as exc:
+            self._record_llm_call(
+                llm_trace_path=llm_trace_path,
+                llm_call_id=llm_call_id,
+                request={"model": model, "messages": messages, "payload": payload},
+                response=None,
+                error=str(exc),
+            )
+            raise
 
         latency = time.time() - start_time
 
-        return {
+        result = {
             "text": data.get("message", {}).get("content", ""),
             "input_tokens": data.get("prompt_eval_count", 0),
             "output_tokens": data.get("eval_count", 0),
             "latency": latency,
             "raw": data,
+            "llm_call_id": llm_call_id,
         }
+        self._record_llm_call(
+            llm_trace_path=llm_trace_path,
+            llm_call_id=llm_call_id,
+            request={"model": model, "messages": messages, "payload": payload},
+            response=result,
+            error=None,
+        )
+        return result
 
     async def batch_complete(
         self,
@@ -206,22 +227,39 @@ class TransformersClient(BaseModelClient):
         **kwargs: Any,
     ) -> dict[str, Any]:
         """完成对话。"""
-        import time
-
         start_time = time.time()
+        llm_trace_path = kwargs.pop("llm_trace_path", None)
+        llm_call_id = self._new_llm_call_id()
 
         # 格式化提示
         prompt = self._format_messages(messages)
 
         # 生成
-        outputs = self.generator(
-            prompt,
-            max_new_tokens=max_tokens,
-            temperature=temperature,
-            do_sample=True,
-            return_full_text=False,
-            **kwargs,
-        )
+        try:
+            outputs = self.generator(
+                prompt,
+                max_new_tokens=max_tokens,
+                temperature=temperature,
+                do_sample=True,
+                return_full_text=False,
+                **kwargs,
+            )
+        except Exception as exc:
+            self._record_llm_call(
+                llm_trace_path=llm_trace_path,
+                llm_call_id=llm_call_id,
+                request={
+                    "model": model,
+                    "messages": messages,
+                    "prompt": prompt,
+                    "temperature": temperature,
+                    "max_tokens": max_tokens,
+                    "kwargs": kwargs,
+                },
+                response=None,
+                error=str(exc),
+            )
+            raise
 
         text = outputs[0]["generated_text"]
         latency = time.time() - start_time
@@ -230,13 +268,29 @@ class TransformersClient(BaseModelClient):
         input_tokens = len(self.tokenizer.encode(prompt))
         output_tokens = len(self.tokenizer.encode(text))
 
-        return {
+        result = {
             "text": text,
             "input_tokens": input_tokens,
             "output_tokens": output_tokens,
             "latency": latency,
             "raw": {"prompt": prompt, "outputs": outputs},
+            "llm_call_id": llm_call_id,
         }
+        self._record_llm_call(
+            llm_trace_path=llm_trace_path,
+            llm_call_id=llm_call_id,
+            request={
+                "model": model,
+                "messages": messages,
+                "prompt": prompt,
+                "temperature": temperature,
+                "max_tokens": max_tokens,
+                "kwargs": kwargs,
+            },
+            response=result,
+            error=None,
+        )
+        return result
 
     async def batch_complete(
         self,

@@ -1,0 +1,8 @@
+{
+  "run_id": "run_20260603_160609",
+  "topics_count": 50,
+  "documents_count": 166,
+  "failed_topics": [],
+  "saliency_top_k": 4,
+  "language": "en"
+}

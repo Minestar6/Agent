@@ -1,0 +1,290 @@
+[
+  {
+    "mode": "qa",
+    "round_in_mode": 1,
+    "strategy": "initial_breadth",
+    "difficulty": "medium",
+    "topics": [
+      "Artificial Intelligence",
+      "Renewable Energy",
+      "Human Evolution"
+    ],
+    "single_k": 2,
+    "multi_k": 1,
+    "target_candidates_per_topic": 4,
+    "results": [
+      {
+        "topic": "Artificial Intelligence",
+        "success": true,
+        "generated_count": 3,
+        "chunks": [
+          "doc_1be62bde08fd::chunk_0000",
+          "doc_1be62bde08fd::chunk_0001",
+          "doc_804dae27c43f::chunk_0000",
+          "doc_804dae27c43f::chunk_0001",
+          "doc_80583f4e8964::chunk_0001"
+        ],
+        "duplicate_combination": false,
+        "error": null
+      },
+      {
+        "topic": "Renewable Energy",
+        "success": true,
+        "generated_count": 3,
+        "chunks": [
+          "doc_42589d89d090::chunk_0000",
+          "doc_ccc069033cb4::chunk_0000",
+          "doc_eb81695220e1::chunk_0000",
+          "doc_eb81695220e1::chunk_0001",
+          "doc_fa5a156b61e9::chunk_0000",
+          "doc_fa5a156b61e9::chunk_0001"
+        ],
+        "duplicate_combination": false,
+        "error": null
+      },
+      {
+        "topic": "Human Evolution",
+        "success": true,
+        "generated_count": 3,
+        "chunks": [
+          "doc_bb7dbd8b36a4::chunk_0000",
+          "doc_c8f638065dd0::chunk_0000",
+          "doc_c8f638065dd0::chunk_0001",
+          "doc_cc52f679ca26::chunk_0000",
+          "doc_cc52f679ca26::chunk_0001",
+          "doc_ffee899a2299::chunk_0000",
+          "doc_ffee899a2299::chunk_0001"
+        ],
+        "duplicate_combination": false,
+        "error": null
+      }
+    ]
+  },
+  {
+    "mode": "qa",
+    "round_in_mode": 2,
+    "strategy": "adaptive",
+    "difficulty": "hard",
+    "topics": [
+      "Artificial Intelligence",
+      "Renewable Energy",
+      "Human Evolution"
+    ],
+    "single_k": 1,
+    "multi_k": 2,
+    "target_candidates_per_topic": 4,
+    "results": [
+      {
+        "topic": "Artificial Intelligence",
+        "success": true,
+        "generated_count": 1,
+        "chunks": [
+          "doc_10240d6c8bf0::chunk_0000",
+          "doc_10240d6c8bf0::chunk_0001",
+          "doc_80583f4e8964::chunk_0000",
+          "doc_80583f4e8964::chunk_0001"
+        ],
+        "duplicate_combination": false,
+        "error": null
+      },
+      {
+        "topic": "Renewable Energy",
+        "success": true,
+        "generated_count": 2,
+        "chunks": [
+          "doc_ccc069033cb4::chunk_0000",
+          "doc_ccc069033cb4::chunk_0001",
+          "doc_eb81695220e1::chunk_0000",
+          "doc_eb81695220e1::chunk_0001",
+          "doc_fa5a156b61e9::chunk_0000",
+          "doc_fa5a156b61e9::chunk_0001"
+        ],
+        "duplicate_combination": false,
+        "error": null
+      },
+      {
+        "topic": "Human Evolution",
+        "success": true,
+        "generated_count": 3,
+        "chunks": [
+          "doc_bb7dbd8b36a4::chunk_0000",
+          "doc_bb7dbd8b36a4::chunk_0001",
+          "doc_cc52f679ca26::chunk_0001",
+          "doc_ffee899a2299::chunk_0001"
+        ],
+        "duplicate_combination": false,
+        "error": null
+      }
+    ]
+  },
+  {
+    "mode": "qa",
+    "round_in_mode": 3,
+    "strategy": "adaptive",
+    "difficulty": "easy",
+    "topics": [
+      "Artificial Intelligence",
+      "Renewable Energy",
+      "Human Evolution"
+    ],
+    "single_k": 2,
+    "multi_k": 1,
+    "target_candidates_per_topic": 4,
+    "results": [
+      {
+        "topic": "Artificial Intelligence",
+        "success": true,
+        "generated_count": 9,
+        "chunks": [
+          "doc_1be62bde08fd::chunk_0000",
+          "doc_804dae27c43f::chunk_0001",
+          "doc_80583f4e8964::chunk_0000",
+          "doc_aef977fc2141::chunk_0000",
+          "doc_aef977fc2141::chunk_0001"
+        ],
+        "duplicate_combination": false,
+        "error": null
+      },
+      {
+        "topic": "Renewable Energy",
+        "success": true,
+        "generated_count": 8,
+        "chunks": [
+          "doc_42589d89d090::chunk_0001",
+          "doc_ccc069033cb4::chunk_0000",
+          "doc_ccc069033cb4::chunk_0001",
+          "doc_eb81695220e1::chunk_0001",
+          "doc_fa5a156b61e9::chunk_0000",
+          "doc_fa5a156b61e9::chunk_0001"
+        ],
+        "duplicate_combination": false,
+        "error": null
+      },
+      {
+        "topic": "Human Evolution",
+        "success": true,
+        "generated_count": 8,
+        "chunks": [
+          "doc_bb7dbd8b36a4::chunk_0000",
+          "doc_bb7dbd8b36a4::chunk_0001",
+          "doc_c8f638065dd0::chunk_0000",
+          "doc_ffee899a2299::chunk_0000"
+        ],
+        "duplicate_combination": false,
+        "error": null
+      }
+    ]
+  },
+  {
+    "mode": "qa",
+    "round_in_mode": 4,
+    "strategy": "adaptive",
+    "difficulty": "medium",
+    "topics": [
+      "Artificial Intelligence",
+      "Renewable Energy",
+      "Human Evolution"
+    ],
+    "single_k": 1,
+    "multi_k": 1,
+    "target_candidates_per_topic": 2,
+    "results": [
+      {
+        "topic": "Artificial Intelligence",
+        "success": true,
+        "generated_count": 4,
+        "chunks": [
+          "doc_10240d6c8bf0::chunk_0000",
+          "doc_10240d6c8bf0::chunk_0001",
+          "doc_1be62bde08fd::chunk_0001",
+          "doc_80583f4e8964::chunk_0000"
+        ],
+        "duplicate_combination": false,
+        "error": null
+      },
+      {
+        "topic": "Renewable Energy",
+        "success": true,
+        "generated_count": 3,
+        "chunks": [
+          "doc_95c3a6e5ad60::chunk_0000",
+          "doc_ccc069033cb4::chunk_0000",
+          "doc_eb81695220e1::chunk_0000",
+          "doc_fa5a156b61e9::chunk_0001"
+        ],
+        "duplicate_combination": false,
+        "error": null
+      },
+      {
+        "topic": "Human Evolution",
+        "success": true,
+        "generated_count": 2,
+        "chunks": [
+          "doc_c8f638065dd0::chunk_0000",
+          "doc_c8f638065dd0::chunk_0001",
+          "doc_cc52f679ca26::chunk_0001",
+          "doc_ffee899a2299::chunk_0000",
+          "doc_ffee899a2299::chunk_0001"
+        ],
+        "duplicate_combination": false,
+        "error": null
+      }
+    ]
+  },
+  {
+    "mode": "qa",
+    "round_in_mode": 5,
+    "strategy": "adaptive",
+    "difficulty": "hard",
+    "topics": [
+      "Renewable Energy",
+      "Human Evolution",
+      "Artificial Intelligence"
+    ],
+    "single_k": 1,
+    "multi_k": 1,
+    "target_candidates_per_topic": 1,
+    "results": [
+      {
+        "topic": "Renewable Energy",
+        "success": true,
+        "generated_count": 1,
+        "chunks": [
+          "doc_42589d89d090::chunk_0001",
+          "doc_eb81695220e1::chunk_0001",
+          "doc_fa5a156b61e9::chunk_0000",
+          "doc_fa5a156b61e9::chunk_0001"
+        ],
+        "duplicate_combination": false,
+        "error": null
+      },
+      {
+        "topic": "Human Evolution",
+        "success": true,
+        "generated_count": 0,
+        "chunks": [
+          "doc_c8f638065dd0::chunk_0001",
+          "doc_cc52f679ca26::chunk_0000",
+          "doc_cc52f679ca26::chunk_0001",
+          "doc_ffee899a2299::chunk_0000",
+          "doc_ffee899a2299::chunk_0001"
+        ],
+        "duplicate_combination": false,
+        "error": null
+      },
+      {
+        "topic": "Artificial Intelligence",
+        "success": true,
+        "generated_count": 0,
+        "chunks": [
+          "doc_10240d6c8bf0::chunk_0000",
+          "doc_10240d6c8bf0::chunk_0001",
+          "doc_804dae27c43f::chunk_0000",
+          "doc_804dae27c43f::chunk_0001"
+        ],
+        "duplicate_combination": false,
+        "error": null
+      }
+    ]
+  }
+]

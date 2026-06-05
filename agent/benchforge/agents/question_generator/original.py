@@ -211,7 +211,6 @@ class QuestionGeneratorAgent:
                 result=result,
                 run_id=plan.run_id,
                 language=plan.language,
-                content_max_length=self.config.retrieval.content_max_length,
             )
 
             if document.status.value == "failed":
@@ -274,6 +273,7 @@ class QuestionGeneratorAgent:
                     ],
                     temperature=0.3,
                     max_tokens=300,
+                    llm_trace_path=str(self.output_path / "llm_calls.jsonl"),
                 )
 
                 # 提取摘要
@@ -316,6 +316,7 @@ Provide a concise overview in <final_summary> tags."""
                     ],
                     temperature=0.3,
                     max_tokens=500,
+                    llm_trace_path=str(self.output_path / "llm_calls.jsonl"),
                 )
 
                 import re
@@ -580,6 +581,7 @@ Provide a concise summary in <final_summary> tags."""
                     ],
                     temperature=getattr(model_client, 'temperature', 0.7),
                     max_tokens=getattr(model_client, 'max_tokens', 2000),
+                    llm_trace_path=str(self.output_path / "llm_calls.jsonl"),
                 )
 
                 # 解析响应
@@ -800,7 +802,6 @@ Provide a concise summary in <final_summary> tags."""
                     result=result,
                     run_id=plan.run_id,
                     language=plan.language,
-                    content_max_length=self.config.retrieval.content_max_length,
                 )
                 if document.status.value == "failed":
                     continue

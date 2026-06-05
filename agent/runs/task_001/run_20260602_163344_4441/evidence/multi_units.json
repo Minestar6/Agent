@@ -1,0 +1,148 @@
+{
+  "Artificial Intelligence": [
+    {
+      "unit_id": "multi_01885d3f65cb",
+      "chunk_ids": [
+        "doc_10240d6c8bf0::chunk_0000",
+        "doc_10240d6c8bf0::chunk_0001"
+      ],
+      "qa_score": 0.19091646390916459,
+      "mcq_score": 0.08692889970262235,
+      "hard_score": 0.17250608272506082
+    },
+    {
+      "unit_id": "multi_da969a66c241",
+      "chunk_ids": [
+        "doc_80583f4e8964::chunk_0000",
+        "doc_80583f4e8964::chunk_0001"
+      ],
+      "qa_score": 0.1702354672553348,
+      "mcq_score": 0.04337748344370865,
+      "hard_score": 0.13922001471670348
+    },
+    {
+      "unit_id": "multi_47bfde10b22f",
+      "chunk_ids": [
+        "doc_1be62bde08fd::chunk_0000",
+        "doc_1be62bde08fd::chunk_0001"
+      ],
+      "qa_score": 0.1010147466783472,
+      "mcq_score": 0.07689443714410868,
+      "hard_score": 0.10658490290553368
+    },
+    {
+      "unit_id": "multi_141cc84d0960",
+      "chunk_ids": [
+        "doc_804dae27c43f::chunk_0000",
+        "doc_804dae27c43f::chunk_0001"
+      ],
+      "qa_score": 0.13513113367174281,
+      "mcq_score": 0.058714043993231824,
+      "hard_score": 0.09945008460236887
+    },
+    {
+      "unit_id": "multi_a0f1df688b7f",
+      "chunk_ids": [
+        "doc_aef977fc2141::chunk_0000",
+        "doc_aef977fc2141::chunk_0001"
+      ],
+      "qa_score": 0.08320545609548166,
+      "mcq_score": 0.0,
+      "hard_score": 0.05976129582267689
+    }
+  ],
+  "Renewable Energy": [
+    {
+      "unit_id": "multi_b33773d31fe0",
+      "chunk_ids": [
+        "doc_fa5a156b61e9::chunk_0000",
+        "doc_fa5a156b61e9::chunk_0001"
+      ],
+      "qa_score": 0.2038432780020936,
+      "mcq_score": 0.1861896216539555,
+      "hard_score": 0.21645880065799314
+    },
+    {
+      "unit_id": "multi_f358eb2e7d05",
+      "chunk_ids": [
+        "doc_42589d89d090::chunk_0000",
+        "doc_42589d89d090::chunk_0001"
+      ],
+      "qa_score": 0.1331788172496137,
+      "mcq_score": 0.16054923444303973,
+      "hard_score": 0.16570023879758392
+    },
+    {
+      "unit_id": "multi_49a70f6509ec",
+      "chunk_ids": [
+        "doc_eb81695220e1::chunk_0000",
+        "doc_eb81695220e1::chunk_0001"
+      ],
+      "qa_score": 0.11577795463589335,
+      "mcq_score": 0.15704337445284525,
+      "hard_score": 0.15674757925454305
+    },
+    {
+      "unit_id": "multi_80032401cf51",
+      "chunk_ids": [
+        "doc_ccc069033cb4::chunk_0000",
+        "doc_ccc069033cb4::chunk_0001"
+      ],
+      "qa_score": 0.10068469405442881,
+      "mcq_score": 0.020046801872074888,
+      "hard_score": 0.1250130005200208
+    }
+  ],
+  "Human Evolution": [
+    {
+      "unit_id": "multi_c7ba72acda00",
+      "chunk_ids": [
+        "doc_bb7dbd8b36a4::chunk_0000",
+        "doc_bb7dbd8b36a4::chunk_0001"
+      ],
+      "qa_score": 0.17562676160807003,
+      "mcq_score": 0.06272808188696041,
+      "hard_score": 0.16785343420857443
+    },
+    {
+      "unit_id": "multi_6b714735a0a6",
+      "chunk_ids": [
+        "doc_c8f638065dd0::chunk_0000",
+        "doc_c8f638065dd0::chunk_0001"
+      ],
+      "qa_score": 0.15089086859688197,
+      "mcq_score": 0.0,
+      "hard_score": 0.1364513734224202
+    },
+    {
+      "unit_id": "multi_3519d1403893",
+      "chunk_ids": [
+        "doc_ffee899a2299::chunk_0000",
+        "doc_ffee899a2299::chunk_0001"
+      ],
+      "qa_score": 0.1317730802415876,
+      "mcq_score": 0.0,
+      "hard_score": 0.11065573770491802
+    },
+    {
+      "unit_id": "multi_3c7e6a6a8cc4",
+      "chunk_ids": [
+        "doc_cc52f679ca26::chunk_0000",
+        "doc_cc52f679ca26::chunk_0001"
+      ],
+      "qa_score": 0.05133883883883886,
+      "mcq_score": 0.04694694694694698,
+      "hard_score": 0.051226226226226246
+    },
+    {
+      "unit_id": "multi_b0cfe04ac05f",
+      "chunk_ids": [
+        "doc_b671459b269d::chunk_0000",
+        "doc_b671459b269d::chunk_0001"
+      ],
+      "qa_score": 0.003390269151138686,
+      "mcq_score": 0.0,
+      "hard_score": 0.0
+    }
+  ]
+}
